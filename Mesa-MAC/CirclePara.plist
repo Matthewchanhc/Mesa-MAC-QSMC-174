@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Outer circle width</key>
+	<integer>700</integer>
+	<key>Inner circle width</key>
+	<integer>90</integer>
+	<key>Delta Angle</key>
+	<integer>20</integer>
+	<key>Kernel Type</key>
+	<integer>2</integer>
+	<key>Kernel Width</key>
+	<integer>15</integer>
+	<key>Direction</key>
+	<integer>0</integer>
+	<key>Threshold</key>
+	<integer>15</integer>
+	<key>Edge type</key>
+	<integer>7</integer>
+	<key>Which edge</key>
+	<integer>6</integer>
+</dict>
+</plist>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>motion</key>
+	<dict>
+		<key>HOME_VEL</key>
+		<integer>25</integer>
+		<key>IP_ADDR</key>
+		<string>10.123.7.254</string>
+		<key>TCP_PORT</key>
+		<real>4444</real>
+		<key>X_VEL</key>
+		<integer>350</integer>
+		<key>Y_VEL</key>
+		<integer>350</integer>
+		<key>Z1_TOLERANCE</key>
+		<real>0.05</real>
+		<key>Z1_VEL</key>
+		<integer>80</integer>
+		<key>Z2_TOLERANCE</key>
+		<real>0.05</real>
+		<key>Z2_VEL</key>
+		<integer>80</integer>
+	</dict>
+</dict>
+</plist>
