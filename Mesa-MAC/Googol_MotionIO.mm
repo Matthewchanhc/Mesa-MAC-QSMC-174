@@ -639,10 +639,10 @@ bool allAxisDisableFin;
         [self getInput:DI_OVERRIDE_KEY];
         
         if ([self getInput:DI_OVERRIDE_KEY] == false){
-            NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = @"Override Key is inserted, please remove it";
-            MESALog(@"[Warning]Override Key is inserted when app init");
             dispatch_sync(dispatch_get_main_queue(), ^{
+                NSAlert *alert = [[NSAlert alloc] init];
+                alert.messageText = @"Override Key is inserted, please remove it";
+                MESALog(@"[Warning]Override Key is inserted when app init");
                 [alert runModal];
             });
             exit(0);
@@ -691,20 +691,20 @@ bool allAxisDisableFin;
     [self setOutput:DO_DOOR_LOCK toState: IO_OFF];  //Unlock front door lock
     
     while ([self getInput:DI_FRONT_DOOR] == false){
-        NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = @"Please OPEN front door and then click OK";
-        MESALog(@"Request OP open door when system init");
         dispatch_sync(dispatch_get_main_queue(), ^{
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"Please OPEN front door and then click OK";
+            MESALog(@"Request OP open door when system init");
             [alert runModal];
         });
     }
     
     //Ask OP to close door to continue system init
     while ([self getInput:DI_FRONT_DOOR] == true){
-        NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = @"Please CLOSE front door and then click OK";
-        MESALog(@"Request OP close foor when system init");
         dispatch_sync(dispatch_get_main_queue(), ^{
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"Please CLOSE front door and then click OK";
+            MESALog(@"Request OP close foor when system init");
             [alert runModal];
         });
     }
@@ -759,10 +759,10 @@ bool allAxisDisableFin;
         
         [self setOutput:DO_DOOR_LOCK toState:IO_OFF];    // unlock door if DUT inside fixture
         
-        NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = @"DUT inside fixture when axis X and Y are homing, please take out DUT and close the door then click OK";
-        MESALog(@"[Warning] DUT inside fixture when X and Y axis homing");
         dispatch_sync(dispatch_get_main_queue(), ^{
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"DUT inside fixture when axis X and Y are homing, please take out DUT and close the door then click OK";
+            MESALog(@"[Warning] DUT inside fixture when X and Y axis homing");
             [alert runModal];
         });
         [NSThread sleepForTimeInterval:0.5];
@@ -954,9 +954,9 @@ bool allAxisDisableFin;
         // Disconnect USB cable
         [self setOutput:DO_USB_CYLINDER toState:![self getSignal:OUTPUT portStatus:DO_USB_CYLINDER]];
 
-        NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = @"Axis Z1 or Z2 reaches negative limit, please check and reopen this app.";
         dispatch_sync(dispatch_get_main_queue(), ^{
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"Axis Z1 or Z2 reaches negative limit, please check and reopen this app.";
             [alert runModal];
         });
         MESALog(@"Axis Z1 or Z2 reaches negative limit, please check.");
@@ -991,9 +991,9 @@ bool allAxisDisableFin;
         // Disconnect USB cable
         [self setOutput:DO_USB_CYLINDER toState:![self getSignal:OUTPUT portStatus:DO_USB_CYLINDER]];
 
-        NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = @"Axis Z1 or Z2 reaches negative limit, please check and reopen this app.";
         dispatch_sync(dispatch_get_main_queue(), ^{
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"Axis Z1 or Z2 reaches negative limit, please check and reopen this app.";
             [alert runModal];
         });
         MESALog(@"Axis Z1 or Z2 reaches negative limit, please check.");
@@ -1031,9 +1031,9 @@ bool allAxisDisableFin;
                     [self stopAxis:i isOriginalStop_Z:true];
                 }
                 
-                NSAlert *alert = [[NSAlert alloc] init];
-                alert.messageText = @"Door is open when homing, please close the door and reopen this app";
                 dispatch_sync(dispatch_get_main_queue(), ^{
+                    NSAlert *alert = [[NSAlert alloc] init];
+                    alert.messageText = @"Door is open when homing, please close the door and reopen this app";
                     [alert runModal];
                 });
                 MESALog(@"Door is open when axis homing");

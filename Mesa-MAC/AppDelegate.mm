@@ -162,10 +162,26 @@ CFDataRef sgReturn;
                     MESALog(@"Command received");
 
                     NSData *receivedData = [NSData dataWithBytes:recvBuf length:bytesReceived];
-                    NSString *command =  [[NSString alloc]initWithData:receivedData encoding:NSASCIIStringEncoding];
-                    command = [[command componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@""];
+                    
+                    
+                    // Convert received NSData into bytes
+                    Byte *bytes = (Byte *)malloc(sizeof(Byte)*8);
+                    [receivedData getBytes:bytes range:NSMakeRange(0,[receivedData length])];
+                    
+                    NSString *command=@"";
+                    
+                    for(int i=0;i< [receivedData length];i++)
+                    {
+                        NSString *newHexStr = [NSString stringWithFormat:@"%x", bytes[i]&0xff];///16进制数
+                        
+                        if([newHexStr length]==1)
+                            command = [NSString stringWithFormat:@"%@0%@", command, newHexStr];
+                        else
+                            command = [NSString stringWithFormat:@"%@%@", command, newHexStr];
+                    }
+                    
+                    MESALog(@"[MesaMac] Command received:%@, length = %lu", command, (unsigned long)[command length], NULL);
 
-                    MESALog(@"[MesaMac] Command received from socket:%@, length = %lu", command, (unsigned long)[command length], NULL);
                     [self commandHandler:command];
                 }
                 
@@ -663,9 +679,9 @@ CFDataRef sgReturn;
                 }
                 
                 [self showMessage:@"[Warning] Fixture is off power" inColor:[NSColor orangeColor]];
-                NSAlert *alert = [[NSAlert alloc] init];
-                alert.messageText = @"Fixture is off power, please reopen this app";
                 dispatch_sync(dispatch_get_main_queue(), ^{
+                    NSAlert *alert = [[NSAlert alloc] init];
+                    alert.messageText = @"Fixture is off power, please reopen this app";
                     [alert runModal];
                 });
                 [self closeAppWithSaveLog];
@@ -880,10 +896,10 @@ CFDataRef sgReturn;
                             [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
                         }
                         
-                        NSAlert *alert = [[NSAlert alloc] init];
-                        alert.messageText = @"DUT inside fixture when axis homing, please take out DUT and then click OK";
                         MESALog(@"[Warning] DUT inside fixture when reset button is pressed");
                         dispatch_sync(dispatch_get_main_queue(), ^{
+                            NSAlert *alert = [[NSAlert alloc] init];
+                            alert.messageText = @"DUT inside fixture when axis homing, please take out DUT and then click OK";
                             [alert runModal];
                         });
                         [NSThread sleepForTimeInterval:0.2];
@@ -997,19 +1013,21 @@ CFDataRef sgReturn;
 
 - (NSString *)inputPassword:(NSString *)prompt
 {
-    NSAlert *alert = [NSAlert alertWithMessageText: prompt
-                                     defaultButton:@"OK"
-                                   alternateButton:@"Cancel"
-                                       otherButton:nil
-                         informativeTextWithFormat:@""];
-    
-    NSSecureTextField *input = [[NSSecureTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
-    
-    [alert setAccessoryView:input];
 
     NSInteger button;
+    NSSecureTextField *input;
     
     dispatch_sync(dispatch_get_main_queue(), ^{
+
+        NSAlert *alert = [NSAlert alertWithMessageText: prompt
+                                         defaultButton:@"OK"
+                                       alternateButton:@"Cancel"
+                                           otherButton:nil
+                             informativeTextWithFormat:@""];
+        
+        __block NSSecureTextField *input = [[NSSecureTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
+        
+        [alert setAccessoryView:input];
         __block NSInteger button = [alert runModal];
     });
 
@@ -2549,9 +2567,9 @@ CFDataRef sgReturn;
 
         [self showMessage:@"[Error] Googol is Disconnect" inColor:[NSColor redColor]];
         
-        NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = @"Motion controller disconnect. Please restart motion controller then relaunch this app";
         dispatch_sync(dispatch_get_main_queue(), ^{
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"Motion controller disconnect. Please restart motion controller then relaunch this app";
             [alert runModal];
         });
         [self closeAppWithSaveLog];
@@ -2641,10 +2659,10 @@ CFDataRef sgReturn;
         long bytesToSend = [sendBackData length];
         long bytesSent = 0;
 
-        while (bytesToSend > 0) {
-            bytesSent = [socketConnection sendBytes:[sendBackData bytes] count:bytesToSend];
-            bytesToSend -= bytesSent;
-        }
+//        while (bytesToSend > 0) {
+            bytesSent = [socketConnection sendBytes:bytes count:[hexString length]/2];
+//            bytesToSend -= bytesSent;
+//        }
     }
     else
     {
@@ -2659,9 +2677,9 @@ CFDataRef sgReturn;
     
     [self showMessage:@"[Error] Motion Serial is loss" inColor:[NSColor redColor]];
 
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Motion Serial port is loss, please check hardware and reopen this app";
     dispatch_sync(dispatch_get_main_queue(), ^{
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = @"Motion Serial port is loss, please check hardware and reopen this app";
         [alert runModal];
     });
     [self closeAppWithSaveLog];

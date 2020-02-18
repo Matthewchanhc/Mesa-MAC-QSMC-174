@@ -225,7 +225,6 @@ extern bool RECORD_PROCESSING_TIME;
 
 - (void)commandHandler:(NSString *)command;
 
--(void)logProcessingTime : (CFTimeInterval)time ofTask : (NSString*)taskNmae isLastTask : (bool)isFirstTask;
 
 @property (strong) NSLock* pidLock;
 

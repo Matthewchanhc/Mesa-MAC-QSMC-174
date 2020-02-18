@@ -143,9 +143,9 @@
     
     [_app showMessage:@"[Error] Lighiting Serial is loss" inColor:[NSColor redColor]];
     
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Lighiting Serial port is loss, please check hardware and reopen this app";
     dispatch_sync(dispatch_get_main_queue(), ^{
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = @"Lighiting Serial port is loss, please check hardware and reopen this app";
         [alert runModal];
     });
     [_app closeAppWithSaveLog];

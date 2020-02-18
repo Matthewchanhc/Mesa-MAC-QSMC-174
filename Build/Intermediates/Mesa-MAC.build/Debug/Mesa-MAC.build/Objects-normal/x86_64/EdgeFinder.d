@@ -1,6 +1,6 @@
 dependencies: \
-  /Volumes/Data/Projects/Mesa-MAC/Mesa-MAC\ 1.0.3.2/Mesa-MAC/EdgeFinder.mm \
-  /Volumes/Data/Projects/Mesa-MAC/Mesa-MAC\ 1.0.3.2/Mesa-MAC/EdgeFinder.h \
+  /Volumes/Data/Projects/Mesa-MAC/Mesa-MAC\ 1.0.3.4/Mesa-MAC/EdgeFinder.mm \
+  /Volumes/Data/Projects/Mesa-MAC/Mesa-MAC\ 1.0.3.4/Mesa-MAC/EdgeFinder.h \
   /usr/local/include/opencv2/core/core.hpp \
   /usr/local/include/opencv2/core/types_c.h \
   /usr/local/include/opencv2/core/version.hpp \
