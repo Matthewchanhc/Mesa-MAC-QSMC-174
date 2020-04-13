@@ -152,7 +152,7 @@
                             DeltaAngle : (int) deltaAngle                // interval of lines between inner rectangle and outer rectangle (unit pixel)
                            LinesResult : (vector<roiLine>&) allLines      // result of lines
 {
-    Vector<CvPoint> allPointsOn1Line;
+    vector<CvPoint> allPointsOn1Line;
     roiLine currentLine;
     
     for (double i = 0; i < 359; i = i + deltaAngle){
@@ -214,7 +214,8 @@
         }
         // -----------------------bresenham draw line END-----------------------
         
-        allPointsOn1Line.copyTo(currentLine.allPoints);
+        allPointsOn1Line = currentLine.allPoints;
+//        allPointsOn1Line.copyTo(currentLine.allPoints);
         allLines.push_back(currentLine);
         allPointsOn1Line.clear();
     }
@@ -333,8 +334,8 @@
 
 - (edgeError) fitCircleByRansacFilterWithTolerance : (double) tolerance
                                             Circle : (fittedCircle&) circle
-                                     AllEdgePoints : (Vector<edgePoint>) allEdgePoints
-                                   OutValidEdgePts : (Vector<edgePoint>&) validEdgePoints{
+                                     AllEdgePoints : (vector<edgePoint>) allEdgePoints
+                                   OutValidEdgePts : (vector<edgePoint>&) validEdgePoints{
     
     struct RANSAC {
         int rand1;
@@ -349,7 +350,7 @@
     
     bool isFitAgain = true;
     
-    Vector<RANSAC> ransacPara;
+    vector<RANSAC> ransacPara;
     
     if (allEdgePoints.size() < 3){
         return edgePtNotEnough;

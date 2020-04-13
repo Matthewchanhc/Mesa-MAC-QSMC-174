@@ -429,7 +429,7 @@
         
         //NSLog(@"line index = %d mean x = %f",lineIndex, mean);
         
-        Vector<edgePoint> filteredEdgePoints;
+        vector<edgePoint> filteredEdgePoints;
         double error = 0.0;
         const int factor = 10;
         
@@ -660,7 +660,7 @@
             vector<edgePoint> validEdgePts;
         };
         
-        Vector<RANSAC> ransacPara;
+        vector<RANSAC> ransacPara;
         
         if (allPtsOnOneSide[i].size() < 3){
             return edgePtNotEnough;

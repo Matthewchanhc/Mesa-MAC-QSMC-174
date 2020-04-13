@@ -491,7 +491,7 @@
     }
 }
 
-+ (void) calcInfo : (Vector<edgePoint>) allEdgePoints allSNR : (vector<double>)SNR edgeInfo : (edgeInfo&)edgeResultInfo{
++ (void) calcInfo : (vector<edgePoint>) allEdgePoints allSNR : (vector<double>)SNR edgeInfo : (edgeInfo&)edgeResultInfo{
     //********** cal all edge pt strength mean & meanSd
     double mean = 0.0;
     double meanSd = 0.0;

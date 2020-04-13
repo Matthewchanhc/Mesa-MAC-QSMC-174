@@ -28,7 +28,7 @@ using namespace cv;
 -(id)init;
 
 
--(tPvFrame)multi_frames_denoise : (Vector<tPvFrame>)source_frames;
+-(tPvFrame)multi_frames_denoise : (vector<tPvFrame>)source_frames;
 
 -(Mat)find_brightest_and_darkest_region : (Mat)source_image;
 -(int)calculate_ROI_intensity_average_in : (Mat)source_image ROI : (Rect_<int>) mask;

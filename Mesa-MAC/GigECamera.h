@@ -105,7 +105,7 @@ enum image_processing_mode{
     Mat cv_source_img;                      //for find circle
     Mat cv_drawing_img;                     //for display
     int img_proc_mode;
-    Vector<tPvFrame> multi_source_frames;
+    vector<tPvFrame> multi_source_frames;
     int save_count;
     // End of OpenCV and image processingvariables
 }

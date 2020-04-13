@@ -48,8 +48,8 @@ struct edgeInfo {
     double brightPrecentage;
     double SNR_Avg;
     double SNR_Min;
-    Vector<edgePoint> rawEdgePts;
-    Vector<edgePoint> ransacValidEdgePts;
+    vector<edgePoint> rawEdgePts;
+    vector<edgePoint> ransacValidEdgePts;
 };
 
 typedef enum
@@ -97,6 +97,6 @@ typedef enum{
 
 + (void) drawEdgePointsIn : (Mat)drawingImage allEdgePoints : (vector<edgePoint>)allEdgePts colour: (char) color;
 
-+ (void) calcInfo : (Vector<edgePoint>) allEdgePoints allSNR : (vector<double>)SNR edgeInfo : (edgeInfo&)edgeResultInfo;
++ (void) calcInfo : (vector<edgePoint>) allEdgePoints allSNR : (vector<double>)SNR edgeInfo : (edgeInfo&)edgeResultInfo;
 
 @end

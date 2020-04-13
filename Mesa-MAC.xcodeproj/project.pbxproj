@@ -25,6 +25,12 @@
 		7D93C52519D54E3F006974F0 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D93C52319D54E3F006974F0 /* MainMenu.xib */; };
 		7D93C53119D54E3F006974F0 /* Mesa_MACTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C53019D54E3F006974F0 /* Mesa_MACTests.m */; };
 		7D93C53C19D54EE3006974F0 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C53B19D54EE3006974F0 /* Constants.m */; };
+		A90035CF24310C5A00CB5B05 /* libopencv_core.3.4.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A90035CC24310C5A00CB5B05 /* libopencv_core.3.4.7.dylib */; };
+		A90035D024310C5A00CB5B05 /* libopencv_highgui.3.4.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A90035CD24310C5A00CB5B05 /* libopencv_highgui.3.4.7.dylib */; };
+		A90035D124310C5A00CB5B05 /* libopencv_imgproc.3.4.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A90035CE24310C5A00CB5B05 /* libopencv_imgproc.3.4.7.dylib */; };
+		A90035DE24340D7300CB5B05 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A90035DD24340D7300CB5B05 /* libstdc++.6.0.9.tbd */; };
+		A90035E024340DFE00CB5B05 /* libopencv_imgcodecs.3.4.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A90035DF24340DFE00CB5B05 /* libopencv_imgcodecs.3.4.7.dylib */; };
+		A9622552243452ED00108F1A /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A962254F2434519500108F1A /* Quartz.framework */; };
 		A974F1E1236F7BAD000C6E0A /* FastServerSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A974F1DD236F7BAD000C6E0A /* FastServerSocket.m */; };
 		A974F1E2236F7BAD000C6E0A /* FastSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A974F1DE236F7BAD000C6E0A /* FastSocket.m */; };
 		A974F1E3236F7BAD000C6E0A /* SocketServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A974F1DF236F7BAD000C6E0A /* SocketServer.m */; };
@@ -34,19 +40,10 @@
 		A9C2C44B1C81310A00857A25 /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C2C4451C81310A00857A25 /* ORSSerialPortManager.m */; };
 		A9C2C44C1C81310A00857A25 /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C2C4471C81310A00857A25 /* ORSSerialRequest.m */; };
 		B90F65E71BAA562900DB94A0 /* DataCollctor.mm in Sources */ = {isa = PBXBuildFile; fileRef = B90F65E61BAA562900DB94A0 /* DataCollctor.mm */; };
-		B92FF0CD1B9C3DB0001C2388 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B92FF0CC1B9C3DB0001C2388 /* CFNetwork.framework */; };
 		B943595D1B2FCC8D0028AE2E /* Googol_TCPIP.mm in Sources */ = {isa = PBXBuildFile; fileRef = B943595C1B2FCC8D0028AE2E /* Googol_TCPIP.mm */; };
 		B94359601B2FCF1E0028AE2E /* Googol_MotionIO.mm in Sources */ = {isa = PBXBuildFile; fileRef = B943595F1B2FCF1E0028AE2E /* Googol_MotionIO.mm */; };
-		B9488E611BB257A5004F4806 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9488E601BB257A5004F4806 /* IOKit.framework */; };
 		B9B9A14E1B14162B00D73165 /* TestInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9B9A14D1B14162B00D73165 /* TestInfoController.m */; };
-		B9C2B67F1B8AFB0C00E439E8 /* libopencv_core.2.4.10.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B9C2B67C1B8AFB0C00E439E8 /* libopencv_core.2.4.10.dylib */; };
-		B9C2B6801B8AFB0C00E439E8 /* libopencv_highgui.2.4.10.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B9C2B67D1B8AFB0C00E439E8 /* libopencv_highgui.2.4.10.dylib */; };
-		B9C2B6811B8AFB0C00E439E8 /* libopencv_imgproc.2.4.10.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B9C2B67E1B8AFB0C00E439E8 /* libopencv_imgproc.2.4.10.dylib */; };
 		C40B0B0319EBAE7D00D685C6 /* settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = C40B0B0219EBAE7D00D685C6 /* settings.plist */; };
-		C438D4F819E94F99009DF8CE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C438D4F419E94F99009DF8CE /* Cocoa.framework */; };
-		C438D4F919E94F99009DF8CE /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C438D4F519E94F99009DF8CE /* libstdc++.dylib */; };
-		C438D4FA19E94F99009DF8CE /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C438D4F619E94F99009DF8CE /* Quartz.framework */; };
-		C438D4FB19E94F99009DF8CE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C438D4F719E94F99009DF8CE /* QuartzCore.framework */; };
 		C441535319E9318E00B17C70 /* GigECamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = C441534E19E9318E00B17C70 /* GigECamera.mm */; };
 		C441535519E9318E00B17C70 /* CV_image_processing.mm in Sources */ = {isa = PBXBuildFile; fileRef = C441535219E9318E00B17C70 /* CV_image_processing.mm */; };
 		C45BD16E1B85AF1900C86004 /* MESATestRS232.m in Sources */ = {isa = PBXBuildFile; fileRef = C45BD16D1B85AF1900C86004 /* MESATestRS232.m */; };
@@ -95,6 +92,15 @@
 		7D93C53019D54E3F006974F0 /* Mesa_MACTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Mesa_MACTests.m; sourceTree = "<group>"; };
 		7D93C53A19D54EE3006974F0 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		7D93C53B19D54EE3006974F0 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		A90035CC24310C5A00CB5B05 /* libopencv_core.3.4.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_core.3.4.7.dylib; sourceTree = "<group>"; };
+		A90035CD24310C5A00CB5B05 /* libopencv_highgui.3.4.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_highgui.3.4.7.dylib; sourceTree = "<group>"; };
+		A90035CE24310C5A00CB5B05 /* libopencv_imgproc.3.4.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_imgproc.3.4.7.dylib; sourceTree = "<group>"; };
+		A90035DD24340D7300CB5B05 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = "libstdc++.6.0.9.tbd"; sourceTree = "<group>"; };
+		A90035DF24340DFE00CB5B05 /* libopencv_imgcodecs.3.4.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_imgcodecs.3.4.7.dylib; sourceTree = "<group>"; };
+		A962254C2434517400108F1A /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		A962254D2434518A00108F1A /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		A962254E2434518F00108F1A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		A962254F2434519500108F1A /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		A974F1DB236F7BAD000C6E0A /* SocketServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketServer.h; sourceTree = "<group>"; };
 		A974F1DC236F7BAD000C6E0A /* FastServerSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastServerSocket.h; sourceTree = "<group>"; };
 		A974F1DD236F7BAD000C6E0A /* FastServerSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FastServerSocket.m; sourceTree = "<group>"; };
@@ -113,26 +119,14 @@
 		A9C2C4471C81310A00857A25 /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ORSSerial/ORSSerialRequest.m; sourceTree = SOURCE_ROOT; };
 		B90F65E51BAA562900DB94A0 /* DataCollctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCollctor.h; sourceTree = "<group>"; };
 		B90F65E61BAA562900DB94A0 /* DataCollctor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataCollctor.mm; sourceTree = "<group>"; };
-		B92FF0CC1B9C3DB0001C2388 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		B943595B1B2FCC8D0028AE2E /* Googol_TCPIP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Googol_TCPIP.h; sourceTree = "<group>"; };
 		B943595C1B2FCC8D0028AE2E /* Googol_TCPIP.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Googol_TCPIP.mm; sourceTree = "<group>"; };
 		B943595E1B2FCF1E0028AE2E /* Googol_MotionIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Googol_MotionIO.h; sourceTree = "<group>"; };
 		B943595F1B2FCF1E0028AE2E /* Googol_MotionIO.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Googol_MotionIO.mm; sourceTree = "<group>"; };
-		B9488E601BB257A5004F4806 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		B98DD58D1B6B270800188879 /* Macro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Macro.h; sourceTree = "<group>"; };
 		B9B9A14C1B14162B00D73165 /* TestInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestInfoController.h; sourceTree = "<group>"; };
 		B9B9A14D1B14162B00D73165 /* TestInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestInfoController.m; sourceTree = "<group>"; };
-		B9C2B67C1B8AFB0C00E439E8 /* libopencv_core.2.4.10.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.10.dylib; path = OpenCV/libopencv_core.2.4.10.dylib; sourceTree = "<group>"; };
-		B9C2B67D1B8AFB0C00E439E8 /* libopencv_highgui.2.4.10.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.2.4.10.dylib; path = OpenCV/libopencv_highgui.2.4.10.dylib; sourceTree = "<group>"; };
-		B9C2B67E1B8AFB0C00E439E8 /* libopencv_imgproc.2.4.10.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.2.4.10.dylib; path = OpenCV/libopencv_imgproc.2.4.10.dylib; sourceTree = "<group>"; };
-		B9E954C31B3028F1004F3D6F /* libopencv_core.2.4.10.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.10.dylib; path = ../../../../../../usr/local/lib/libopencv_core.2.4.10.dylib; sourceTree = "<group>"; };
-		B9E954C51B3028FB004F3D6F /* libopencv_imgproc.2.4.10.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.2.4.10.dylib; path = ../../../../../../usr/local/lib/libopencv_imgproc.2.4.10.dylib; sourceTree = "<group>"; };
-		B9E954C71B302907004F3D6F /* libopencv_highgui.2.4.10.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.2.4.10.dylib; path = ../../../../../../usr/local/lib/libopencv_highgui.2.4.10.dylib; sourceTree = "<group>"; };
 		C40B0B0219EBAE7D00D685C6 /* settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = settings.plist; sourceTree = "<group>"; };
-		C438D4F419E94F99009DF8CE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		C438D4F519E94F99009DF8CE /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
-		C438D4F619E94F99009DF8CE /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
-		C438D4F719E94F99009DF8CE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		C441534D19E9318E00B17C70 /* GigECamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GigECamera.h; sourceTree = "<group>"; };
 		C441534E19E9318E00B17C70 /* GigECamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GigECamera.mm; sourceTree = "<group>"; };
 		C441535119E9318E00B17C70 /* CV_image_processing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CV_image_processing.h; sourceTree = "<group>"; };
@@ -141,7 +135,7 @@
 		C45BD16D1B85AF1900C86004 /* MESATestRS232.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MESATestRS232.m; sourceTree = "<group>"; };
 		C4A3FBC11A1EE9EA00802708 /* LightingControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightingControl.h; sourceTree = "<group>"; };
 		C4A3FBC21A1EE9EA00802708 /* LightingControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LightingControl.mm; sourceTree = "<group>"; };
-		C4D13C1419E950AA0016F0AE /* libPvAPI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPvAPI.a; path = "AVT_GigE_SDK/lib-pc/x64/4.2/libPvAPI.a"; sourceTree = "<group>"; };
+		C4D13C1419E950AA0016F0AE /* libPvAPI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libPvAPI.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,16 +143,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B9488E611BB257A5004F4806 /* IOKit.framework in Frameworks */,
-				B92FF0CD1B9C3DB0001C2388 /* CFNetwork.framework in Frameworks */,
-				B9C2B67F1B8AFB0C00E439E8 /* libopencv_core.2.4.10.dylib in Frameworks */,
-				B9C2B6801B8AFB0C00E439E8 /* libopencv_highgui.2.4.10.dylib in Frameworks */,
-				B9C2B6811B8AFB0C00E439E8 /* libopencv_imgproc.2.4.10.dylib in Frameworks */,
+				A9622552243452ED00108F1A /* Quartz.framework in Frameworks */,
 				C4D13C1519E950AA0016F0AE /* libPvAPI.a in Frameworks */,
-				C438D4F819E94F99009DF8CE /* Cocoa.framework in Frameworks */,
-				C438D4F919E94F99009DF8CE /* libstdc++.dylib in Frameworks */,
-				C438D4FA19E94F99009DF8CE /* Quartz.framework in Frameworks */,
-				C438D4FB19E94F99009DF8CE /* QuartzCore.framework in Frameworks */,
+				A90035D124310C5A00CB5B05 /* libopencv_imgproc.3.4.7.dylib in Frameworks */,
+				A90035E024340DFE00CB5B05 /* libopencv_imgcodecs.3.4.7.dylib in Frameworks */,
+				A90035D024310C5A00CB5B05 /* libopencv_highgui.3.4.7.dylib in Frameworks */,
+				A90035DE24340D7300CB5B05 /* libstdc++.6.0.9.tbd in Frameworks */,
+				A90035CF24310C5A00CB5B05 /* libopencv_core.3.4.7.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,22 +166,10 @@
 		7D93C50E19D54E3F006974F0 = {
 			isa = PBXGroup;
 			children = (
-				B9488E601BB257A5004F4806 /* IOKit.framework */,
-				B92FF0CC1B9C3DB0001C2388 /* CFNetwork.framework */,
-				B9C2B67C1B8AFB0C00E439E8 /* libopencv_core.2.4.10.dylib */,
-				B9C2B67D1B8AFB0C00E439E8 /* libopencv_highgui.2.4.10.dylib */,
-				B9C2B67E1B8AFB0C00E439E8 /* libopencv_imgproc.2.4.10.dylib */,
-				B9E954C71B302907004F3D6F /* libopencv_highgui.2.4.10.dylib */,
-				B9E954C51B3028FB004F3D6F /* libopencv_imgproc.2.4.10.dylib */,
-				B9E954C31B3028F1004F3D6F /* libopencv_core.2.4.10.dylib */,
-				C4D13C1419E950AA0016F0AE /* libPvAPI.a */,
-				C438D4F419E94F99009DF8CE /* Cocoa.framework */,
-				C438D4F519E94F99009DF8CE /* libstdc++.dylib */,
-				C438D4F619E94F99009DF8CE /* Quartz.framework */,
-				C438D4F719E94F99009DF8CE /* QuartzCore.framework */,
 				7D93C51919D54E3F006974F0 /* Mesa-MAC */,
 				7D93C52D19D54E3F006974F0 /* Mesa-MACTests */,
 				7D93C51819D54E3F006974F0 /* Products */,
+				A90035D22431137F00CB5B05 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -248,6 +227,23 @@
 				7D93C52F19D54E3F006974F0 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A90035D22431137F00CB5B05 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A962254D2434518A00108F1A /* CFNetwork.framework */,
+				A962254E2434518F00108F1A /* Cocoa.framework */,
+				A962254F2434519500108F1A /* Quartz.framework */,
+				A962254C2434517400108F1A /* IOKit.framework */,
+				C4D13C1419E950AA0016F0AE /* libPvAPI.a */,
+				A90035DD24340D7300CB5B05 /* libstdc++.6.0.9.tbd */,
+				A90035CC24310C5A00CB5B05 /* libopencv_core.3.4.7.dylib */,
+				A90035CD24310C5A00CB5B05 /* libopencv_highgui.3.4.7.dylib */,
+				A90035DF24340DFE00CB5B05 /* libopencv_imgcodecs.3.4.7.dylib */,
+				A90035CE24310C5A00CB5B05 /* libopencv_imgproc.3.4.7.dylib */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		A974F1DA236F7B93000C6E0A /* SocketServer */ = {
@@ -614,7 +610,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -631,6 +627,7 @@
 					/usr/local/include,
 					/usr/local/include/opencv,
 					"/Application/MESA-Mac",
+					/usr/local/include/opencv2,
 				);
 				INFOPLIST_FILE = "Mesa-MAC/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -644,8 +641,11 @@
 					"$(PROJECT_DIR)/J80G_Overlay/Users/gdlocal/Overlay/AVT_GigE_SDK/lib-pc/x64/4.2",
 					"$(PROJECT_DIR)/J80G_Overlay/Users/gdlocal/Overlay/AVT_GigE_SDK/lib-pc/x86/4.2",
 					"$(PROJECT_DIR)/J80G_Overlay/usr/local/lib",
+					/usr/lib,
+					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MARKETING_VERSION = 1.0.3.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -655,7 +655,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -672,6 +672,7 @@
 					/usr/local/include,
 					/usr/local/include/opencv,
 					"/Application/MESA-Mac",
+					/usr/local/include/opencv2,
 				);
 				INFOPLIST_FILE = "Mesa-MAC/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -685,8 +686,11 @@
 					"$(PROJECT_DIR)/J80G_Overlay/Users/gdlocal/Overlay/AVT_GigE_SDK/lib-pc/x64/4.2",
 					"$(PROJECT_DIR)/J80G_Overlay/Users/gdlocal/Overlay/AVT_GigE_SDK/lib-pc/x86/4.2",
 					"$(PROJECT_DIR)/J80G_Overlay/usr/local/lib",
+					/usr/lib,
+					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MARKETING_VERSION = 1.0.3.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

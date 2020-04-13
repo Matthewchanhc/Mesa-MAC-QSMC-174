@@ -23,7 +23,7 @@
     return self;
 }
 
--(tPvFrame)multi_frames_denoise : (Vector<tPvFrame>)source_frames{
+-(tPvFrame)multi_frames_denoise : (vector<tPvFrame>)source_frames{
     long num_of_frames = source_frames.size();
     long buffer_size = source_frames[1].ImageSize;
     long all_images_current_intensity = 0;

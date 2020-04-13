@@ -152,7 +152,7 @@
         [_app.camera capture_image_in_mode : camera_software_trigger
                              num_of_frames : camera_single_frame_capture
                                ns_img_view : _cameraView
-                        image_process_mode : find_rectangle_mode];
+                        image_process_mode : find_circle_mode];
         
         _stressTestCycle.intValue = 0;
     }
@@ -1235,7 +1235,7 @@
         [_app.camera capture_image_in_mode : camera_software_trigger
                              num_of_frames : camera_free_run_capture
                                ns_img_view : _cameraView
-                        image_process_mode : find_rectangle_mode];
+                        image_process_mode : find_circle_mode];
     }
     else
     {
@@ -1471,7 +1471,7 @@
     [_app.camera capture_image_in_mode : camera_software_trigger
                          num_of_frames : camera_single_frame_capture
                            ns_img_view : _cameraView
-                    image_process_mode : find_rectangle_mode];
+                    image_process_mode : find_circle_mode];
     
     //IMAGESAVING = true;
     
@@ -1497,7 +1497,7 @@
     [_app.camera capture_image_in_mode : camera_software_trigger
                          num_of_frames : camera_single_frame_capture
                            ns_img_view : _cameraView
-                    image_process_mode : find_rectangle_mode];
+                    image_process_mode : find_circle_mode];
 
 
     // record down rect's Cx and Cy
@@ -1524,7 +1524,7 @@
         [_app.camera capture_image_in_mode : camera_software_trigger
                          num_of_frames : camera_single_frame_capture
                            ns_img_view : _cameraView
-                    image_process_mode : find_rectangle_mode];
+                    image_process_mode : find_circle_mode];
 
         float secondCx = _app.camera.centerX;
         float secondCy = _app.camera.centerY;

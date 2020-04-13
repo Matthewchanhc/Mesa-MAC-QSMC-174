@@ -671,11 +671,9 @@ CFDataRef sgReturn;
                 if (isMacbook) {
                     [_motion setOutput:DO_USB_CYLINDER toState:IO_OFF];
                     
-                    // blow bottom and top vacuum
+                    // blow bottom vacuum
                     [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
                     [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
-                    [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
-                    [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
                 }
                 
                 [self showMessage:@"[Warning] Fixture is off power" inColor:[NSColor orangeColor]];
@@ -784,25 +782,18 @@ CFDataRef sgReturn;
 
                 
                 /******************* Turn ON Top Vacuum when DUT put in, turn OFF when test done [Macbook fixture only] *************/
-                if (isMacbook && ![_motion getSignal:OUTPUT portStatus:DI_TOP_VACUUM_WARNING] && !_prevBotVac && [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2]) {
+                
+                bool curBotVac = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2];
+                
+                if (isMacbook && !_prevBotVac && curBotVac) {
                     _isReadyForTest = true;
                 }
-                else if (isMacbook && ![_motion getSignal:OUTPUT portStatus:DI_TOP_VACUUM_WARNING] && _prevBotVac && ![_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2]){
+                else if (isMacbook && _prevBotVac && !curBotVac){
                     _isReadyForTest = false;
                 }
                 
                 if (isMacbook){
-                    _prevBotVac = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2];
-                }
-                
-                if (isMacbook && ![_motion getSignal:OUTPUT portStatus:DI_BOTTOM_VACUUM_WARNING] && ![_motion getSignal:OUTPUT portStatus:DO_TOP_VACUUM] &&_isReadyForTest) {
-                    [NSThread sleepForTimeInterval:1];
-                    [_motion setOutput:DO_TOP_VACUUM toState:IO_ON];
-                    [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
-                }
-                else if (isMacbook && [_motion getSignal:OUTPUT portStatus:DO_TOP_VACUUM] && !_isReadyForTest){
-                    [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
-                    [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
+                    _prevBotVac = curBotVac;
                 }
                 
                 /****************** NEW Start Button Detect ***************/
@@ -880,20 +871,17 @@ CFDataRef sgReturn;
                             [_motion setOutput:DO_USB_CYLINDER toState:IO_OFF];
                         }
 
-                        if ([_motion getInput:DI_TOP_VACUUM_WARNING] || [_motion getInput:DI_BOTTOM_VACUUM_WARNING]){
+                        if ([_motion getInput:DI_BOTTOM_VACUUM_WARNING]){
                             //停真空
                             [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
-                            [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
                         
                             // 噴氣
                             [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_ON];
-                            [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_ON];
                         
                             [NSThread sleepForTimeInterval:0.3];
                         
                             // 停噴氣
                             [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
-                            [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
                         }
                         
                         MESALog(@"[Warning] DUT inside fixture when reset button is pressed");
@@ -1272,13 +1260,11 @@ CFDataRef sgReturn;
         }
         
         // (3) Check 8 touching sensors
-        bool isTouching[4];
-        isTouching[0] = [_motion getSignal:INPUT portStatus:DI_MB_TOP_TOUCH_1];
-        isTouching[1] = [_motion getSignal:INPUT portStatus:DI_MB_TOP_TOUCH_2];
-        isTouching[2] = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_1];
-        isTouching[3] = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2];
+        bool isTouching[2];
+        isTouching[0] = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_1];
+        isTouching[1] = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2];
         
-        for (int i = 0; i < 4; i++){
+        for (int i = 0; i < 2; i++){
             if (isTouching[i] == true) {
                 continue;
             }
@@ -1291,18 +1277,7 @@ CFDataRef sgReturn;
         MESALog(@"(ii) DUT is touching all 4 sensors");
         
         
-        // (4) Check if the top vacuum is OK or not
-        if ([_motion getSignal:INPUT portStatus:DI_TOP_VACUUM_WARNING]) {
-            MESALog(@"(iii) Top vacuun is OK");
-        }
-        else{
-            MESALog(@"[Error]AppDelegate.macbookSafetyCheck, Top Vacuum is not OK");
-            [self showMessage:@"[Error] Top Vacuum is not OK" inColor:[NSColor redColor]];
-            return false;
-        }
-        
-        
-        // (5) Turn ON bottom vacuu,
+        // (5) Turn ON bottom vacuum
         MESALog(@"(iv) Start bottom vacuum");
         [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
         [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_ON];
@@ -1439,17 +1414,14 @@ CFDataRef sgReturn;
 
     //停真空
     [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
-    [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
     
     // 噴氣
     [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_ON];
-    [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_ON];
     
     [NSThread sleepForTimeInterval:0.3];
     
     // 停噴氣
     [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
-    [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
     
     if (isAutoReleaseDUT == true) {
         // remove USB
@@ -1626,7 +1598,7 @@ CFDataRef sgReturn;
                     [_camera capture_image_in_mode : camera_software_trigger
                                      num_of_frames : camera_single_frame_capture
                                        ns_img_view : _config_window_macbook.cameraView
-                                image_process_mode : find_rectangle_mode];
+                                image_process_mode : find_circle_mode];
                 }
                 else{
                     
@@ -1675,7 +1647,7 @@ CFDataRef sgReturn;
                         [_camera capture_image_in_mode : camera_software_trigger
                                          num_of_frames : camera_single_frame_capture
                                            ns_img_view : cameraView
-                                    image_process_mode : find_rectangle_mode];
+                                    image_process_mode : find_circle_mode];
 
                     }
                     else {
@@ -1686,7 +1658,7 @@ CFDataRef sgReturn;
                         [_camera capture_image_in_mode : camera_software_trigger
                                          num_of_frames : camera_single_frame_capture
                                            ns_img_view : cameraView
-                                    image_process_mode : find_rectangle_mode];
+                                    image_process_mode : find_circle_mode];
                     }
                 }
                 else {
@@ -2003,11 +1975,11 @@ CFDataRef sgReturn;
         CFTimeInterval prevTime = 0;
         float timeChange = 0;
         
-        Vector<CFTimeInterval> pidTime;
+        vector<CFTimeInterval> pidTime;
         pidTime.clear();
         pidTime.push_back(0);
         
-        Vector<double> pidForce;
+        vector<double> pidForce;
         pidForce.clear();
         
         [_pidLock lock];
