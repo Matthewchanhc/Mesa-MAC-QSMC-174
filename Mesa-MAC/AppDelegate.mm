@@ -1642,7 +1642,7 @@ CFDataRef sgReturn;
                             [NSThread sleepForTimeInterval:0.5];
                         }
                         
-                        MESALog(@"Find rectangle for alignment.");
+                        MESALog(@"Find circle for alignment.");
 
                         [_camera capture_image_in_mode : camera_software_trigger
                                          num_of_frames : camera_single_frame_capture
@@ -1703,7 +1703,7 @@ CFDataRef sgReturn;
         if(_camera.centerX <= 0 && _camera.centerY <= 0)
         {
             if (isMacbook) {
-                [self showMessage:@"--[Error]Rectangle not found." inColor:[NSColor redColor]];
+                [self showMessage:@"--[Error]Circle not found." inColor:[NSColor redColor]];
                 offsetX = 0;
                 offsetY = 0;
             }

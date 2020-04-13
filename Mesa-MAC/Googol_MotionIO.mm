@@ -813,6 +813,8 @@ bool allAxisDisableFin;
         [self setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
         
         [self setOutput:DO_FRONT_LED toState:IO_ON];
+
+        [self setOutput:DO_DOOR_LOCK toState: IO_OFF];
     }
     
     [self setOutput:DO_SIGNAL_GREEN toState:IO_ON];
