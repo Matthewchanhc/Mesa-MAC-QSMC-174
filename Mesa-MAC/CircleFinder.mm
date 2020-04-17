@@ -214,7 +214,10 @@
         }
         // -----------------------bresenham draw line END-----------------------
         
-        allPointsOn1Line = currentLine.allPoints;
+        for (int i=0; i<allPointsOn1Line.size(); i++)
+            currentLine.allPoints.push_back(allPointsOn1Line[i]);
+        
+//        allPointsOn1Line = currentLine.allPoints;
 //        allPointsOn1Line.copyTo(currentLine.allPoints);
         allLines.push_back(currentLine);
         allPointsOn1Line.clear();

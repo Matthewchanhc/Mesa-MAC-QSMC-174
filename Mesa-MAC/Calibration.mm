@@ -152,7 +152,7 @@
             [_inStartLeft setColor:[_app.motion getSignal:INPUT portStatus:DI_START_LEFT]?[NSColor greenColor]:[NSColor redColor]];
             [_inStartRight setColor:[_app.motion getSignal:INPUT portStatus:DI_START_RIGHT]?[NSColor greenColor]:[NSColor redColor]];
             [_inPower setColor:[_app.motion getSignal:INPUT portStatus:DI_POWER]?[NSColor greenColor]:[NSColor redColor]];
-            [_inDoor setColor:[_app.motion getSignal:INPUT portStatus:DI_DOOR]?[NSColor greenColor]:[NSColor redColor]];
+//            [_inDoor setColor:[_app.motion getSignal:INPUT portStatus:DI_DOOR]?[NSColor greenColor]:[NSColor redColor]];
             [_inZ1Warning setColor:[_app.motion getSignal:INPUT portStatus:DI_Z1_WARNING]?[NSColor greenColor]:[NSColor redColor]];
             [_inZ2Warning setColor:[_app.motion getSignal:INPUT portStatus:DI_Z2_WARNING]?[NSColor greenColor]:[NSColor redColor]];
             

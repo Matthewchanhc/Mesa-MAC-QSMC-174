@@ -407,220 +407,228 @@ CFDataRef sgReturn;
 //        _updateThread = [[NSThread alloc] initWithTarget:self selector:@selector(updateStatus) object:nil];
 //        _updateThread.name = @"Update thread";
 //        [_updateThread start];
+        @try {
+            while (_workFlag) {
+                
+                if (_workFlag != WorkDefault) {
+                    STOPTEST = FALSE;
+                }
+                switch(_workFlag)
+                {
+   #pragma mark --WorkDefault
+                    case WorkDefault:               //Default
+                    {
+                        @autoreleasepool {
+                            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+                        }
+                        break;
+                    }
+   #pragma mark --WorkImageCapture
+                    case WorkImageCapture:          //[XY] Capture
+                    {
+                        IMAGESAVING = true;
+                        
+                        if (RECORD_PROCESSING_TIME) {
+                            CFTimeInterval pt = CACurrentMediaTime();
+                            [self goToCamPositionWithDisplay:_cameraNSView];
+                            pt = CACurrentMediaTime() - pt;
+                            [self logProcessingTime:pt ofTask:@"goToCamPositionWithDisplay" isFirstTask:false];
+                        }
+                        else{
+                            [self goToCamPositionWithDisplay:_cameraNSView];
+                        }
+                        
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --WorkLeftProbePosition
+                    case WorkLeftProbePosition:     //[XY] Left probe position
+                    {
+                        
+                        if (RECORD_PROCESSING_TIME) {
+                            CFTimeInterval pt = CACurrentMediaTime();
+                            [self goToLeftProbePosition];
+                            pt = CACurrentMediaTime() - pt;
+                            [self logProcessingTime:pt ofTask:@"goToLeftProbePosition" isFirstTask:false];
+                        }
+                        else{
+                            [self goToLeftProbePosition];
+                        }
+
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --WorkRightProbePosition
+                    case WorkRightProbePosition:    //[XY] Right probe position
+                    {
+                        if (RECORD_PROCESSING_TIME) {
+                            CFTimeInterval pt = CACurrentMediaTime();
+                            [self goToRightProbePosition];
+                            pt = CACurrentMediaTime() - pt;
+                            [self logProcessingTime:pt ofTask:@"goToRightProbePosition" isFirstTask:false];
+                        }
+                        else{
+                            [self goToRightProbePosition];
+                        }
+
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --WorkTopPosition
+                    case WorkTopPosition:           //[Z1/Z2] Top position
+                    {
+                        if (RECORD_PROCESSING_TIME) {
+                            CFTimeInterval pt = CACurrentMediaTime();
+                            [self goToTopProbePosition];
+                            pt = CACurrentMediaTime() - pt;
+                            [self logProcessingTime:pt ofTask:@"goToTopProbePosition" isFirstTask:false];
+                        }
+                        else{
+                            [self goToTopProbePosition];
+                        }
+                        
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --WorkConnPosition
+                    case WorkConnPosition:          //[Z1/Z2] Conn position
+                    {
+                        if (RECORD_PROCESSING_TIME) {
+                            CFTimeInterval pt = CACurrentMediaTime();
+                            [self goToConnProbePosition];
+                            pt = CACurrentMediaTime() - pt;
+                            [self logProcessingTime:pt ofTask:@"goToConnProbePosition" isFirstTask:false];
+                        }
+                        else{
+                            [self goToConnProbePosition];
+                        }
+                        
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --WorkHoverPosition
+                    case WorkHoverPosition:         //[Z1/Z2] Hover psotion
+                    {
+                        if (RECORD_PROCESSING_TIME) {
+                            CFTimeInterval pt = CACurrentMediaTime();
+                            [self goToHoverProbePosition];
+                            pt = CACurrentMediaTime() - pt;
+                            [self logProcessingTime:pt ofTask:@"goToHoverProbePosition" isFirstTask:false];
+                        }
+                        else{
+                            [self goToHoverProbePosition];
+                        }
+                        
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --WorkDownPosition
+                    case WorkDownPosition:          //[Z1/Z2] Down position
+                    {
+                        if (RECORD_PROCESSING_TIME) {
+                            CFTimeInterval pt = CACurrentMediaTime();
+                            //[self goToDownProbePosition];
+                            [self goToDownProbePosition_V2];
+                            pt = CACurrentMediaTime() - pt;
+                            [self logProcessingTime:pt ofTask:@"goToDownProbePosition" isFirstTask:false];
+                        }
+                        else{
+                            //[self goToDownProbePosition];
+                            [self goToDownProbePosition_V2];
+                        }
+                        
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --WorkDUTPlacePosition
+                    case WorkDUTPlacePosition:      //[XYZ1Z2] home
+                    {
+                        if (RECORD_PROCESSING_TIME) {
+                            CFTimeInterval pt = CACurrentMediaTime();
+                            [self goToHomePosition];
+                            pt = CACurrentMediaTime() - pt;
+                            [self logProcessingTime:pt ofTask:@"goToHomePosition" isFirstTask:false];
+                        }
+                        else{
+                            [self goToHomePosition];
+                        }
+                        
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --WorkClean
+                    case WorkClean:                 //[XYZ1Z2] Cleaning
+                    {
+                        if (isMacbook) {
+                            if (RECORD_PROCESSING_TIME) {
+                                CFTimeInterval pt = CACurrentMediaTime();
+                                [self macbookCleanProbe];
+                                pt = CACurrentMediaTime() - pt;
+                                [self logProcessingTime:pt ofTask:@"CleanProbe" isFirstTask:false];
+                            }
+                            else{
+                                [self macbookCleanProbe];
+                            }
+                        }
+                        else{
+                            [self goToClean];
+                        }
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --CalXMovement
+                    case CalXMovement:              //[X] STREAMING WINDOW x movement
+                    {
+                        _isAtHomePosition = false;
+                        [self axisMovement:AXIS_X];
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --CalYMovement
+                    case CalYMovement:              //[Y] STREAMING WINDOW y movement
+                    {
+                        _isAtHomePosition = false;
+                        [self axisMovement:AXIS_Y];
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --CalZmovement
+                    case CalZmovement:              //[Z1/Z2] STREAMING WINDOW z movement
+                    {
+                        _isAtHomePosition = false;
+                        [self axisMovement:_myProbeStatus == MESARS232ProbeAtLeft? AXIS_Z1:AXIS_Z2];
+
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --SendMessage
+                   case SendMessage:
+                    {
+                        MESALog(@"Msg %@ send out in SMSG mode",_motion.cmdBuffer, NULL);
+                       // [_spiderman addRecordWithData:[[NSString stringWithFormat:@"Msg %@ send out in SMSG mode\n",_motion.cmdBuffer] dataUsingEncoding:NSUTF8StringEncoding]];
+                        
+                        [_motion.tcpip writeOut:_motion.cmdBuffer];
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+   #pragma mark --ReleaseDUT
+                    case ReleaseDUT:
+                    {
+                        _isAtHomePosition = false;
+                        [self macbookReleaseWithCleanning:false];
+                        _workFlag = WorkDefault;
+                        break;
+                    }
+                }//switch
+            }
+        } @catch (NSException *exception) {
+            
+            MESALog( @"Error on WorkFlow: %@", exception.name);
+            MESALog( @"Error on WorkFlow Reason: %@", exception.reason );
+        } @finally {
+            
+        }
         
-         while (_workFlag) {
-             
-             if (_workFlag != WorkDefault) {
-                 STOPTEST = FALSE;
-             }
-             switch(_workFlag)
-             {
-#pragma mark --WorkDefault
-                 case WorkDefault:               //Default
-                 {
-                     @autoreleasepool {
-                         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
-                     }
-                     break;
-                 }
-#pragma mark --WorkImageCapture
-                 case WorkImageCapture:          //[XY] Capture
-                 {
-                     IMAGESAVING = true;
-                     
-                     if (RECORD_PROCESSING_TIME) {
-                         CFTimeInterval pt = CACurrentMediaTime();
-                         [self goToCamPositionWithDisplay:_cameraNSView];
-                         pt = CACurrentMediaTime() - pt;
-                         [self logProcessingTime:pt ofTask:@"goToCamPositionWithDisplay" isFirstTask:false];
-                     }
-                     else{
-                         [self goToCamPositionWithDisplay:_cameraNSView];
-                     }
-                     
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --WorkLeftProbePosition
-                 case WorkLeftProbePosition:     //[XY] Left probe position
-                 {
-                     
-                     if (RECORD_PROCESSING_TIME) {
-                         CFTimeInterval pt = CACurrentMediaTime();
-                         [self goToLeftProbePosition];
-                         pt = CACurrentMediaTime() - pt;
-                         [self logProcessingTime:pt ofTask:@"goToLeftProbePosition" isFirstTask:false];
-                     }
-                     else{
-                         [self goToLeftProbePosition];
-                     }
-
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --WorkRightProbePosition
-                 case WorkRightProbePosition:    //[XY] Right probe position
-                 {
-                     if (RECORD_PROCESSING_TIME) {
-                         CFTimeInterval pt = CACurrentMediaTime();
-                         [self goToRightProbePosition];
-                         pt = CACurrentMediaTime() - pt;
-                         [self logProcessingTime:pt ofTask:@"goToRightProbePosition" isFirstTask:false];
-                     }
-                     else{
-                         [self goToRightProbePosition];
-                     }
-
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --WorkTopPosition
-                 case WorkTopPosition:           //[Z1/Z2] Top position
-                 {
-                     if (RECORD_PROCESSING_TIME) {
-                         CFTimeInterval pt = CACurrentMediaTime();
-                         [self goToTopProbePosition];
-                         pt = CACurrentMediaTime() - pt;
-                         [self logProcessingTime:pt ofTask:@"goToTopProbePosition" isFirstTask:false];
-                     }
-                     else{
-                         [self goToTopProbePosition];
-                     }
-                     
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --WorkConnPosition
-                 case WorkConnPosition:          //[Z1/Z2] Conn position
-                 {
-                     if (RECORD_PROCESSING_TIME) {
-                         CFTimeInterval pt = CACurrentMediaTime();
-                         [self goToConnProbePosition];
-                         pt = CACurrentMediaTime() - pt;
-                         [self logProcessingTime:pt ofTask:@"goToConnProbePosition" isFirstTask:false];
-                     }
-                     else{
-                         [self goToConnProbePosition];
-                     }
-                     
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --WorkHoverPosition
-                 case WorkHoverPosition:         //[Z1/Z2] Hover psotion
-                 {
-                     if (RECORD_PROCESSING_TIME) {
-                         CFTimeInterval pt = CACurrentMediaTime();
-                         [self goToHoverProbePosition];
-                         pt = CACurrentMediaTime() - pt;
-                         [self logProcessingTime:pt ofTask:@"goToHoverProbePosition" isFirstTask:false];
-                     }
-                     else{
-                         [self goToHoverProbePosition];
-                     }
-                     
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --WorkDownPosition
-                 case WorkDownPosition:          //[Z1/Z2] Down position
-                 {
-                     if (RECORD_PROCESSING_TIME) {
-                         CFTimeInterval pt = CACurrentMediaTime();
-                         //[self goToDownProbePosition];
-                         [self goToDownProbePosition_V2];
-                         pt = CACurrentMediaTime() - pt;
-                         [self logProcessingTime:pt ofTask:@"goToDownProbePosition" isFirstTask:false];
-                     }
-                     else{
-                         //[self goToDownProbePosition];
-                         [self goToDownProbePosition_V2];
-                     }
-                     
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --WorkDUTPlacePosition
-                 case WorkDUTPlacePosition:      //[XYZ1Z2] home
-                 {
-                     if (RECORD_PROCESSING_TIME) {
-                         CFTimeInterval pt = CACurrentMediaTime();
-                         [self goToHomePosition];
-                         pt = CACurrentMediaTime() - pt;
-                         [self logProcessingTime:pt ofTask:@"goToHomePosition" isFirstTask:false];
-                     }
-                     else{
-                         [self goToHomePosition];
-                     }
-                     
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --WorkClean
-                 case WorkClean:                 //[XYZ1Z2] Cleaning
-                 {
-                     if (isMacbook) {
-                         if (RECORD_PROCESSING_TIME) {
-                             CFTimeInterval pt = CACurrentMediaTime();
-                             [self macbookCleanProbe];
-                             pt = CACurrentMediaTime() - pt;
-                             [self logProcessingTime:pt ofTask:@"CleanProbe" isFirstTask:false];
-                         }
-                         else{
-                             [self macbookCleanProbe];
-                         }
-                     }
-                     else{
-                         [self goToClean];
-                     }
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --CalXMovement
-                 case CalXMovement:              //[X] STREAMING WINDOW x movement
-                 {
-                     _isAtHomePosition = false;
-                     [self axisMovement:AXIS_X];
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --CalYMovement
-                 case CalYMovement:              //[Y] STREAMING WINDOW y movement
-                 {
-                     _isAtHomePosition = false;
-                     [self axisMovement:AXIS_Y];
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --CalZmovement
-                 case CalZmovement:              //[Z1/Z2] STREAMING WINDOW z movement
-                 {
-                     _isAtHomePosition = false;
-                     [self axisMovement:_myProbeStatus == MESARS232ProbeAtLeft? AXIS_Z1:AXIS_Z2];
-
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --SendMessage
-                case SendMessage:
-                 {
-                     MESALog(@"Msg %@ send out in SMSG mode",_motion.cmdBuffer, NULL);
-                    // [_spiderman addRecordWithData:[[NSString stringWithFormat:@"Msg %@ send out in SMSG mode\n",_motion.cmdBuffer] dataUsingEncoding:NSUTF8StringEncoding]];
-                     
-                     [_motion.tcpip writeOut:_motion.cmdBuffer];
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-#pragma mark --ReleaseDUT
-                 case ReleaseDUT:
-                 {
-                     _isAtHomePosition = false;
-                     [self macbookReleaseWithCleanning:false];
-                     _workFlag = WorkDefault;
-                     break;
-                 }
-             }//switch
-         }
      }
 }
 
@@ -655,321 +663,399 @@ CFDataRef sgReturn;
 //    [_motion.tcpip.inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop]
 //                                          forMode:NSDefaultRunLoopMode];
     while (true) {
-        @autoreleasepool {
-//            for (int i=0; i<50000; i++) {
-//                i++;
-//            }
-            @autoreleasepool {
-                [NSThread sleepForTimeInterval:0.01];
-                [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
-            }
-            /******************* Power Detect *******************/
-            if(![_motion getSignal:INPUT portStatus:DI_POWER] && _powerFlag)
-            {
-                _powerFlag = false;
-                
-                if (isMacbook) {
-                    [_motion setOutput:DO_USB_CYLINDER toState:IO_OFF];
-                    
-                    // blow bottom vacuum
-                    [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
-                    [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
-                }
-                
-                [self showMessage:@"[Warning] Fixture is off power" inColor:[NSColor orangeColor]];
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    NSAlert *alert = [[NSAlert alloc] init];
-                    alert.messageText = @"Fixture is off power, please reopen this app";
-                    [alert runModal];
-                });
-                [self closeAppWithSaveLog];
-            }
-            else if([_motion getSignal:INPUT portStatus:DI_POWER] && !_powerFlag)
-            {
-                _powerFlag = true;
-                
-                [_motion setOutput:DO_SIGNAL_GREEN toState:IO_ON];
-                [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
-                [_motion setOutput:DO_SIGNAL_RED toState:IO_OFF];
-                
-                [self showMessage:@"Fixture is on power" inColor:[NSColor greenColor]];
-            }
+    
+        @try {
             
-            if([_motion getSignal:INPUT portStatus:DI_POWER])
-            {
-                /******************* Axes Alarm Check *******************/
-                if(_motion.axesAlarm)
+            @autoreleasepool {
+    //            for (int i=0; i<50000; i++) {
+    //                i++;
+    //            }
+                @autoreleasepool {
+                    [NSThread sleepForTimeInterval:0.01];
+                    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+                }
+                /******************* Power Detect *******************/
+                //Matthew 2023/09/22 : DUT放上吸气
+                if([_motion getSignal:INPUT portStatus:DI_MB_TOP_TOUCH_1] )
                 {
-                    [_motion setOutput:DO_SIGNAL_GREEN toState:IO_OFF];
-                    [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
-                    [_motion setOutput:DO_SIGNAL_RED toState:IO_ON];
                     
-                    for(int i=0;i<4;i++)
+                    if(_TOP_TOUCH_Status)
                     {
-                        if (_motion.axesAlarm & 1<<i) {
-                            if (!(_axesAlarmOn & 1<<i)) {
-                                [self showMessage:[NSString stringWithFormat:@"[Error] Axis %@ alarm is active, please close the software", [_motion.axes objectAtIndex:i+1]] inColor:[NSColor redColor]];
-                                _axesAlarmOn = _axesAlarmOn | 1<<i;
-                                
-                                _problemFlag++;
-                            }
-                        }
-                        else
-                        {
-                            _axesAlarmOn = _axesAlarmOn & (0Xff - (1<<i));
-                            _problemFlag--;
-                        }
+                        [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
+                        [_motion setOutput:DO_TOP_VACUUM toState:IO_ON];
+                        
+                        
+                        _TOP_TOUCH_Status=false;
+                        MESALog(@"have DUT ");
                     }
-                }
-                
-                if (!_homing) {
-                    /******************* Positive Limit Check *******************/
-                    if(_motion.axesPositiveLimit)
-                    {
-                        for(int i=0;i<4;i++)
-                        {
-                            if (_motion.axesPositiveLimit & 1<<i) {
-                                if (!(_positiveLimitOn & 1<<i)){
-                                    [self showMessage:[NSString stringWithFormat:@"[Warning] Axis %@ possive limit sensor is active", [_motion.axes objectAtIndex:i+1]] inColor:[NSColor orangeColor]];
-                                    _positiveLimitOn =  _positiveLimitOn & 1<<i;
-                                }
-                            }
-                            else
-                            {
-                                _positiveLimitOn = _positiveLimitOn & (0Xff - (1<<i));
-                            }
-                        }
-                    }
+                   
                     
-                    /******************* Negative Limit Check *******************/
-                    if(_motion.axesNegativeLimit)
-                    {
-                        for(int i=0;i<4;i++)
-                        {
-                            if (_motion.axesNegativeLimit & 1<<i) {
-                                if (!(_negativeLimitOn & 1<<i)){
-                                    [self showMessage:[NSString stringWithFormat:@"[Warning] Axis %@ negative limit sensor is active", [_motion.axes objectAtIndex:i+1]] inColor:[NSColor orangeColor]];
-                                    _negativeLimitOn = _negativeLimitOn & 1<<i;
-                                }
-                            }
-                            else
-                            {
-                                _negativeLimitOn = _negativeLimitOn & (0Xff - (1<<i));
-                            }
-                        }
-                    }
-                }
-                
-                
-                
-                /******************* Override key action  [Macbook fixture only] *************/
-                if (_prevOverrideKey == true && [_motion getSignal:INPUT portStatus:DI_OVERRIDE_KEY] == false && isMacbook){
-                    // key inserted, enter calibration
-                    MESALog(@"Open Setup page");
-                    if (!CALIBRATION) {
-                        [self clickSetup];
-                    }
-                }
-                else if (_prevOverrideKey == false && [_motion getSignal:INPUT portStatus:DI_OVERRIDE_KEY] == true && isMacbook){
-                    // key removed, quit calibration
-                    MESALog(@"Close Setup page");
-                    if (CALIBRATION){
-                        [_config_window_macbook clickQuit];
-                    }
-                }
-                
-                _prevOverrideKey = [_motion getSignal:INPUT portStatus:DI_OVERRIDE_KEY];
+                    
 
-                
-                /******************* Turn ON Top Vacuum when DUT put in, turn OFF when test done [Macbook fixture only] *************/
-                
-                bool curBotVac = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2];
-                
-                if (isMacbook && !_prevBotVac && curBotVac) {
-                    _isReadyForTest = true;
+                }else
+                {
+                    
+                   
+                    if(!_TOP_TOUCH_Status)
+                    {
+                        _TOP_TOUCH_Status=true;
+                        //停真空
+                        [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
+                    
+                        // 噴氣
+                        [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_ON];
+                    
+                        
+                        [NSThread sleepForTimeInterval:0.3];
+                    
+                        // 停噴氣
+                        [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
+                        MESALog(@"without DUT ");
+                       
+                    }
+
                 }
-                else if (isMacbook && _prevBotVac && !curBotVac){
-                    _isReadyForTest = false;
+                
+                if(![_motion getSignal:INPUT portStatus:DI_POWER] && _powerFlag)
+                {
+                    _powerFlag = false;
+                    
+                    if (isMacbook) {
+                        //matthew 2023-08- 28
+                        //// off  Short Cylinder
+                        [self StartCylinder:DO_SHORT_CYLINDER_OFF:DI_SHORT_CYLINDER_INITIAl:@"DO_SHORT_CYLINDER_OFF"];
+                        
+                        // off long Cylinder
+                        [self StartCylinder:DO_LONG_CYLINDER_OFF:DI_LEFT_LONG_CYLINDER_INITIAl:@"DO_LONG_CYLINDER_OFF"];
+                        //end matthew
+                        [_motion setOutput:DO_USB_CYLINDER toState:IO_OFF];
+                        
+                        // blow bottom vacuum
+                        [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
+                        [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
+                        [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
+                        [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
+                    }
+                    
+                    [self showMessage:@"[Warning] Fixture is off power" inColor:[NSColor orangeColor]];
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        NSAlert *alert = [[NSAlert alloc] init];
+                        alert.messageText = @"Fixture is off power, please reopen this app";
+                        [alert runModal];
+                    });
+                    [self closeAppWithSaveLog];
+                }
+                else if([_motion getSignal:INPUT portStatus:DI_POWER] && !_powerFlag)
+                {
+                    _powerFlag = true;
+                    
+                    [_motion setOutput:DO_SIGNAL_GREEN toState:IO_ON];
+                    [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
+                    [_motion setOutput:DO_SIGNAL_RED toState:IO_OFF];
+                    
+                    [self showMessage:@"Fixture is on power" inColor:[NSColor greenColor]];
                 }
                 
-                if (isMacbook){
-                    _prevBotVac = curBotVac;
-                }
-                
-                /****************** NEW Start Button Detect ***************/
-                if ([_motion getSignal:INPUT portStatus:DI_START_LEFT] && [_motion getSignal:INPUT portStatus:DI_START_RIGHT]) { //pressing two start buttons
-                   _startFlag = true;
-                }
-                else if (![_motion getSignal:INPUT portStatus:DI_START_LEFT] && ![_motion getSignal:INPUT portStatus:DI_START_RIGHT]){ //releasing two start buttons
-                    if (_startFlag == true) {   //raising edge detected
-                        if (isMacbook) {
-                            if ([_motion getInput:DI_USB_CYLINDER_BACK_LIMIT] && _isAtHomePosition){ //if(_isAtHomePosition){
-                                /* -----safety check for macbook -----*/
-                                bool safetyCheckDone = false;
-                                
-                                if (RECORD_PROCESSING_TIME) {
-                                    CFTimeInterval pt = CACurrentMediaTime();
-                                    safetyCheckDone = [self macbookSafetyCheck];
-                                    pt = CACurrentMediaTime() - pt;
-                                    [self logProcessingTime:pt ofTask:@"Load DUT with safety check" isFirstTask:true];
+                if([_motion getSignal:INPUT portStatus:DI_POWER])
+                {
+                    /******************* Axes Alarm Check *******************/
+                    if(_motion.axesAlarm)
+                    {
+                        [_motion setOutput:DO_SIGNAL_GREEN toState:IO_OFF];
+                        [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
+                        [_motion setOutput:DO_SIGNAL_RED toState:IO_ON];
+                        
+                        for(int i=0;i<4;i++)
+                        {
+                            if (_motion.axesAlarm & 1<<i) {
+                                if (!(_axesAlarmOn & 1<<i)) {
+                                    [self showMessage:[NSString stringWithFormat:@"[Error] Axis %@ alarm is active, please close the software", [_motion.axes objectAtIndex:i+1]] inColor:[NSColor redColor]];
+                                    _axesAlarmOn = _axesAlarmOn | 1<<i;
+                                    
+                                    _problemFlag++;
                                 }
-                                else{
-                                    safetyCheckDone = [self macbookSafetyCheck];
+                            }
+                            else
+                            {
+                                _axesAlarmOn = _axesAlarmOn & (0Xff - (1<<i));
+                                _problemFlag--;
+                            }
+                        }
+                    }
+                    
+                    if (!_homing) {
+                        /******************* Positive Limit Check *******************/
+                        if(_motion.axesPositiveLimit)
+                        {
+                            for(int i=0;i<4;i++)
+                            {
+                                if (_motion.axesPositiveLimit & 1<<i) {
+                                    if (!(_positiveLimitOn & 1<<i)){
+                                        [self showMessage:[NSString stringWithFormat:@"[Warning] Axis %@ possive limit sensor is active", [_motion.axes objectAtIndex:i+1]] inColor:[NSColor orangeColor]];
+                                        _positiveLimitOn =  _positiveLimitOn & 1<<i;
+                                    }
                                 }
-                                
-                                if (!safetyCheckDone){
-                                    // if fail safety check, run [macbookReleaseWithCleanning]
+                                else
+                                {
+                                    _positiveLimitOn = _positiveLimitOn & (0Xff - (1<<i));
+                                }
+                            }
+                        }
+                        
+                        /******************* Negative Limit Check *******************/
+                        if(_motion.axesNegativeLimit)
+                        {
+                            for(int i=0;i<4;i++)
+                            {
+                                if (_motion.axesNegativeLimit & 1<<i) {
+                                    if (!(_negativeLimitOn & 1<<i)){
+                                        [self showMessage:[NSString stringWithFormat:@"[Warning] Axis %@ negative limit sensor is active", [_motion.axes objectAtIndex:i+1]] inColor:[NSColor orangeColor]];
+                                        _negativeLimitOn = _negativeLimitOn & 1<<i;
+                                    }
+                                }
+                                else
+                                {
+                                    _negativeLimitOn = _negativeLimitOn & (0Xff - (1<<i));
+                                }
+                            }
+                        }
+                    }
+                    
+                    
+                    
+                    /******************* Override key action  [Macbook fixture only] *************/
+                    if (_prevOverrideKey == true && [_motion getSignal:INPUT portStatus:DI_OVERRIDE_KEY] == false && isMacbook){
+                        // key inserted, enter calibration
+                        MESALog(@"Open Setup page");
+                        if (!CALIBRATION) {
+                            [self clickSetup];
+                        }
+                    }
+                    else if (_prevOverrideKey == false && [_motion getSignal:INPUT portStatus:DI_OVERRIDE_KEY] == true && isMacbook){
+                        // key removed, quit calibration
+                        MESALog(@"Close Setup page");
+                        if (CALIBRATION){
+                            [_config_window_macbook clickQuit];
+                        }
+                    }
+                    
+                    _prevOverrideKey = [_motion getSignal:INPUT portStatus:DI_OVERRIDE_KEY];
+
+                    
+                    /******************* Turn ON Top Vacuum when DUT put in, turn OFF when test done [Macbook fixture only] *************/
+                    
+                    bool curBotVac = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2];
+                    
+                    if (isMacbook && !_prevBotVac && curBotVac) {
+                        _isReadyForTest = true;
+                    }
+                    else if (isMacbook && _prevBotVac && !curBotVac){
+                        _isReadyForTest = false;
+                    }
+                    
+                    if (isMacbook){
+                        _prevBotVac = curBotVac;
+                    }
+                    
+                    /****************** NEW Start Button Detect ***************/
+                    if ([_motion getSignal:INPUT portStatus:DI_START_LEFT] && [_motion getSignal:INPUT portStatus:DI_START_RIGHT]) { //pressing two start buttons
+                        _startFlag = true;
+                        
+                       
+                    }
+                    else if (![_motion getSignal:INPUT portStatus:DI_START_LEFT] && ![_motion getSignal:INPUT portStatus:DI_START_RIGHT]){ //releasing two start buttons
+                        if (_startFlag == true) {   //raising edge detected
+                            if (isMacbook) {
+                                if ([_motion getInput:DI_USB_CYLINDER_BACK_LIMIT] && _isAtHomePosition){ //if(_isAtHomePosition){
+                                    /* -----safety check for macbook -----*/
+                                    bool safetyCheckDone = false;
+                                    
                                     if (RECORD_PROCESSING_TIME) {
                                         CFTimeInterval pt = CACurrentMediaTime();
-                                        [self macbookReleaseWithCleanning:false];
+                                        safetyCheckDone = [self macbookSafetyCheck];
                                         pt = CACurrentMediaTime() - pt;
-                                        [self logProcessingTime:pt ofTask:@"Unload DUT when safety check fail" isFirstTask:false];
+                                        [self logProcessingTime:pt ofTask:@"Load DUT with safety check" isFirstTask:true];
                                     }
                                     else{
-                                        [self macbookReleaseWithCleanning:false];
+                                        safetyCheckDone = [self macbookSafetyCheck];
                                     }
-                                    /* -----safety check for macbook END----*/
+                                    
+                                    if (!safetyCheckDone){
+                                        // if fail safety check, run [macbookReleaseWithCleanning]
+                                        if (RECORD_PROCESSING_TIME) {
+                                            CFTimeInterval pt = CACurrentMediaTime();
+                                            [self macbookReleaseWithCleanning:false];
+                                            pt = CACurrentMediaTime() - pt;
+                                            [self logProcessingTime:pt ofTask:@"Unload DUT when safety check fail" isFirstTask:false];
+                                        }
+                                        else{
+                                            [self macbookReleaseWithCleanning:false];
+                                        }
+                                        /* -----safety check for macbook END----*/
+                                    }
+                                    else{
+                                        //********** send ok singal to mesa host here *********************
+                                    }
+                                }
+                                else{   // USB is plugging in DUT (Macbook product)
+                                    if (RECORD_PROCESSING_TIME) {
+                                        CFTimeInterval pt = CACurrentMediaTime();
+                                        [self macbookReleaseWithCleanning:true];
+                                        pt = CACurrentMediaTime() - pt;
+                                        [self logProcessingTime:pt ofTask:@"Unload DUT" isFirstTask:false];
+                                    }
+                                    else{
+                                        [self macbookReleaseWithCleanning:true];
+                                    }
+                                }
+                            }
+                            else{   // For iphone product
+                                if (_isAtHomePosition){
+                                    [self goToCamPositionWithDisplay:_cameraNSView];
+                                    _isAtHomePosition = false;
                                 }
                                 else{
-                                    //********** send ok singal to mesa host here *********************
-                                }
-                            }
-                            else{   // USB is plugging in DUT (Macbook product)
-                                if (RECORD_PROCESSING_TIME) {
-                                    CFTimeInterval pt = CACurrentMediaTime();
-                                    [self macbookReleaseWithCleanning:true];
-                                    pt = CACurrentMediaTime() - pt;
-                                    [self logProcessingTime:pt ofTask:@"Unload DUT" isFirstTask:false];
-                                }
-                                else{
-                                    [self macbookReleaseWithCleanning:true];
+                                    [self goToHomePosition];
+                                    _isAtHomePosition = true;
                                 }
                             }
                         }
-                        else{   // For iphone product
-                            if (_isAtHomePosition){
-                                [self goToCamPositionWithDisplay:_cameraNSView];
-                                _isAtHomePosition = false;
-                            }
-                            else{
-                                [self goToHomePosition];
-                                _isAtHomePosition = true;
-                            }
-                        }
-                    }
-                    _startFlag = false;
-                }
-                
-                /******************* Reset Button Detect *******************/
-                if([_motion getSignal:INPUT portStatus:DI_RESET])
-                {
-                    [self showMessage:@"Reset button pressed" inColor:[NSColor blackColor]];
-                    
-                    while ([_motion getInput:DI_MB_BOTTOM_TOUCH_1] || [_motion getInput:DI_MB_BOTTOM_TOUCH_2]) {
-                        
-                        if ([_motion getInput:DI_USB_CYLINDER_FRONT_LIMIT]) {
-                            [_motion setOutput:DO_USB_CYLINDER toState:IO_OFF];
-                        }
-
-                        if ([_motion getInput:DI_BOTTOM_VACUUM_WARNING]){
-                            //停真空
-                            [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
-                        
-                            // 噴氣
-                            [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_ON];
-                        
-                            [NSThread sleepForTimeInterval:0.3];
-                        
-                            // 停噴氣
-                            [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
-                        }
-                        
-                        MESALog(@"[Warning] DUT inside fixture when reset button is pressed");
-                        dispatch_sync(dispatch_get_main_queue(), ^{
-                            NSAlert *alert = [[NSAlert alloc] init];
-                            alert.messageText = @"DUT inside fixture when axis homing, please take out DUT and then click OK";
-                            [alert runModal];
-                        });
-                        [NSThread sleepForTimeInterval:0.2];
+                        _startFlag = false;
                     }
                     
-                    [_motion goHome:AXIS_Z1];
-                    [_motion goHome:AXIS_Z2];
-                    [_motion waitMotor:AXIS_Z1];
-                    [_motion waitMotor:AXIS_Z2];
-                    
-                    [_motion goHome:AXIS_X];
-                    [_motion goHome:AXIS_Y];
-                    [_motion waitMotor:AXIS_X];
-                    [_motion waitMotor:AXIS_Y];
-                    
-                    [_motion setOutput:DO_SIGNAL_GREEN toState:IO_ON];
-                    [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
-                    [_motion setOutput:DO_SIGNAL_RED toState:IO_OFF];
-                }
-                
-                /******************* Probe Force Limit *******************/
-                if([_motion getSignal:INPUT portStatus:DI_Z1_WARNING])
-                {
-                    _force1Flag = true;
-
-                    if (_probeDowning == false){
-                        [_motion goTo:AXIS_Z1 withPosition:0];
-                        [_motion goTo:AXIS_Z2 withPosition:0];
+                    /******************* Reset Button Detect *******************/
+                    if([_motion getSignal:INPUT portStatus:DI_RESET])
+                    {
+                        [self showMessage:@"Reset button pressed" inColor:[NSColor blackColor]];
+                        
+                        while ([_motion getInput:DI_MB_BOTTOM_TOUCH_1] || [_motion getInput:DI_MB_BOTTOM_TOUCH_2]) {
+                            
+                            if ([_motion getInput:DI_USB_CYLINDER_FRONT_LIMIT]) {
+                                [_motion setOutput:DO_USB_CYLINDER toState:IO_OFF];
+                            }
+                            
+                            if ([_motion getInput:DI_BOTTOM_VACUUM_WARNING]){
+                                //停真空
+                                [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
+                            
+                                // 噴氣
+                                [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_ON];
+                            
+                                [NSThread sleepForTimeInterval:0.3];
+                            
+                                // 停噴氣
+                                [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
+                            }
+                            
+                            MESALog(@"[Warning] DUT inside fixture when reset button is pressed");
+                            dispatch_sync(dispatch_get_main_queue(), ^{
+                                NSAlert *alert = [[NSAlert alloc] init];
+                                alert.messageText = @"DUT inside fixture when axis homing, please take out DUT and then click OK";
+                                [alert runModal];
+                            });
+                            [NSThread sleepForTimeInterval:0.2];
+                        }
+                        while ([_motion getInput:DI_FRONT_DOOR] == true){
+                            dispatch_sync(dispatch_get_main_queue(), ^{
+                                NSAlert *alert = [[NSAlert alloc] init];
+                                alert.messageText = @"Please CLOSE front door and then click OK";
+                                MESALog(@"Request OP close foor when system init");
+                                [alert runModal];
+                            });
+                        }
+                        [_motion setOutput:DO_DOOR_LOCK toState: IO_ON];
+                        [_motion goHome:AXIS_Z1];
+                        [_motion goHome:AXIS_Z2];
                         [_motion waitMotor:AXIS_Z1];
                         [_motion waitMotor:AXIS_Z2];
                         
-                        STOPTEST = true;
+                        [_motion goHome:AXIS_X];
+                        [_motion goHome:AXIS_Y];
+                        [_motion waitMotor:AXIS_X];
+                        [_motion waitMotor:AXIS_Y];
+                        
+                        [_motion setOutput:DO_SIGNAL_GREEN toState:IO_ON];
+                        [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
+                        [_motion setOutput:DO_SIGNAL_RED toState:IO_OFF];
+                        [_motion setOutput:DO_DOOR_LOCK toState: IO_OFF];
                     }
                     
-                    [self showMessage:@"[Error] Pressure at left probe is over limit" inColor:[NSColor redColor]];
-                }
-                else{
-                    _force1Flag = false;
-                }
-                
-                if([_motion getSignal:INPUT portStatus:DI_Z2_WARNING] && _probeDowning == false)
-                {
-                    _force2Flag = true;
-                    
-                    if (_probeDowning == false){
-                        [_motion goTo:AXIS_Z1 withPosition:0];
-                        [_motion goTo:AXIS_Z2 withPosition:0];
-                        [_motion waitMotor:AXIS_Z1];
-                        [_motion waitMotor:AXIS_Z2];
-                    
-                        STOPTEST = true;
+                    /******************* Probe Force Limit *******************/
+                    if([_motion getSignal:INPUT portStatus:DI_Z1_WARNING])
+                    {
+                        _force1Flag = true;
+
+                        if (_probeDowning == false){
+                            [_motion goTo:AXIS_Z1 withPosition:0];
+                            [_motion goTo:AXIS_Z2 withPosition:0];
+                            [_motion waitMotor:AXIS_Z1];
+                            [_motion waitMotor:AXIS_Z2];
+                            
+                            STOPTEST = true;
+                        }
+                        
+                        [self showMessage:@"[Error] Pressure at left probe is over limit" inColor:[NSColor redColor]];
+                    }
+                    else{
+                        _force1Flag = false;
                     }
                     
-                    [self showMessage:@"[Error] Pressure at right probe is over limit" inColor:[NSColor redColor]];
-                }
-                else{
-                    _force2Flag = false;
-                }
-                
-                if ((_force1Flag || _force2Flag)&&[_motion getSignal:OUTPUT portStatus:DO_SIGNAL_GREEN]&&![_motion getSignal:OUTPUT portStatus:DO_SIGNAL_YELLOW]&&![_motion getSignal:OUTPUT portStatus:DO_SIGNAL_RED]) {
+                    if([_motion getSignal:INPUT portStatus:DI_Z2_WARNING] && _probeDowning == false)
+                    {
+                        _force2Flag = true;
+                        
+                        if (_probeDowning == false){
+                            [_motion goTo:AXIS_Z1 withPosition:0];
+                            [_motion goTo:AXIS_Z2 withPosition:0];
+                            [_motion waitMotor:AXIS_Z1];
+                            [_motion waitMotor:AXIS_Z2];
+                        
+                            STOPTEST = true;
+                        }
+                        
+                        [self showMessage:@"[Error] Pressure at right probe is over limit" inColor:[NSColor redColor]];
+                    }
+                    else{
+                        _force2Flag = false;
+                    }
                     
-                    [_motion setOutput:DO_SIGNAL_GREEN toState:IO_OFF];
-                    [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
-                    [_motion setOutput:DO_SIGNAL_RED toState:IO_ON];
-                }
-                if (!_force1Flag&&!_force2Flag&&![_motion getSignal:OUTPUT portStatus:DO_SIGNAL_GREEN]&&![_motion getSignal:OUTPUT portStatus:DO_SIGNAL_YELLOW]&&[_motion getSignal:OUTPUT portStatus:DO_SIGNAL_RED]) {
-                    [_motion setOutput:DO_SIGNAL_GREEN toState:IO_ON];
-                    [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
-                    [_motion setOutput:DO_SIGNAL_RED toState:IO_OFF];
-                }
-                
-                /******************* Re-release DUT when it was interrupted *******************/
-                if (isMacbook && _isInterruptDutRelease == true) {
-                    if (isMacbook && ![_motion getSignal:INPUT portStatus:DI_FRONT_DOOR]) {
+                    if ((_force1Flag || _force2Flag)&&[_motion getSignal:OUTPUT portStatus:DO_SIGNAL_GREEN]&&![_motion getSignal:OUTPUT portStatus:DO_SIGNAL_YELLOW]&&![_motion getSignal:OUTPUT portStatus:DO_SIGNAL_RED]) {
+                        
+                        [_motion setOutput:DO_SIGNAL_GREEN toState:IO_OFF];
+                        [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
+                        [_motion setOutput:DO_SIGNAL_RED toState:IO_ON];
+                    }
+                    if (!_force1Flag&&!_force2Flag&&![_motion getSignal:OUTPUT portStatus:DO_SIGNAL_GREEN]&&![_motion getSignal:OUTPUT portStatus:DO_SIGNAL_YELLOW]&&[_motion getSignal:OUTPUT portStatus:DO_SIGNAL_RED]) {
+                        [_motion setOutput:DO_SIGNAL_GREEN toState:IO_ON];
+                        [_motion setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
+                        [_motion setOutput:DO_SIGNAL_RED toState:IO_OFF];
+                    }
+                    
+                    /******************* Re-release DUT when it was interrupted *******************/
+                    if (isMacbook && _isInterruptDutRelease == true) {
                         MESALog(@"Re-release platform");
                         STOPTEST = false;
                         if ([self macbookReleaseWithCleanning:true]){
                             _isAtHomePosition = true;
                         }
                     }
+    /*                if (isMacbook && _isInterruptDutRelease == true) {
+                        if (isMacbook && ![_motion getSignal:INPUT portStatus:DI_FRONT_DOOR]) {
+                            MESALog(@"Re-release platform");
+                            STOPTEST = false;
+                            if ([self macbookReleaseWithCleanning:true]){
+                                _isAtHomePosition = true;
+                            }
+                        }
+                    }
+    */
                 }
             }
+        } @catch (NSException *exception) {
+            MESALog( @"Error on statusCheck: %@", exception.name);
+             MESALog( @"Error on statusCheck Reason: %@", exception.reason );
+        } @finally {
+            
         }
     }
 }
@@ -1224,13 +1310,14 @@ CFDataRef sgReturn;
 -(bool)macbookSafetyCheck{
     
     @autoreleasepool {
+
         // (1) Check front door is close or not
         if ([_motion getSignal:INPUT portStatus:DI_FRONT_DOOR] == false){
             // Door closed and locked
             MESALog(@"(i) Door is closed");
         }
         else{
-            MESALog(@"[Error]AppDelegate.macbookSafetyCheck, Door not close when pressing start button");
+            MESALog(@"[Error]AppDelegate.SafetyCheck, Door not close when pressing start button");
             [self showMessage:@"[Error] Door not closed" inColor:[NSColor redColor]];
             return false;
         }
@@ -1249,11 +1336,11 @@ CFDataRef sgReturn;
             [self showMessage:@"[Error] Door cannot be locked" inColor:[NSColor redColor]];
             return false;
         }
-        
+
         // (7) re-enable all axis
         bool isHbbClear;
         [_motion disableAxis];
-        isHbbClear = [_motion enableAxis : true];
+        isHbbClear = [_motion enableAxis : false];
         if (isHbbClear == false){
             [self showMessage : @"[Error]Hbb cannot be cleared, please reopen front door then close it" inColor:[NSColor redColor]];
             return false;
@@ -1264,23 +1351,42 @@ CFDataRef sgReturn;
         isTouching[0] = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_1];
         isTouching[1] = [_motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2];
         
+       
         for (int i = 0; i < 2; i++){
             if (isTouching[i] == true) {
                 continue;
             }
             else{
-                MESALog(@"[Error]AppDelegate.macbookSafetyCheck, DUT is not put properly");
+                MESALog(@"[Error]AppDelegate.SafetyCheck, DUT is not put properly");
                 [self showMessage:@"[Error] DUT is not put properly" inColor:[NSColor redColor]];
                 return false;
             }
         }
-        MESALog(@"(ii) DUT is touching all 4 sensors");
+        MESALog(@"(ii) DUT is touching all 2 sensors");
+        bool isTopVacuumOK = false;
+        if ([_motion getSignal:INPUT portStatus:DI_TOP_VACUUM_WARNING]) {
+            isTopVacuumOK = true;
+
+        }
+          
         
+        if(isTopVacuumOK )
+        {
+            MESALog(@"(v) Top vacuum OK");
+          
+        }else
+        {
+            
+            [self showMessage:@"[Error] Top Vacuum is not Ok" inColor:[NSColor redColor]];
+            return false;
+        }
         
         // (5) Turn ON bottom vacuum
         MESALog(@"(iv) Start bottom vacuum");
         [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
         [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_ON];
+        [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
+        [_motion setOutput:DO_TOP_VACUUM toState:IO_ON];
         
         
         // Check if the bottom vacuum is OK or not
@@ -1294,14 +1400,31 @@ CFDataRef sgReturn;
         }
         
         if (isBotVacuumOK) {
-            MESALog(@"(v) Bottom vacuun OK");
+            MESALog(@"(v) Bottom vacuum OK");
         }
         else{
-            MESALog(@"[Error]AppDelegate.macbookSafetyCheck, Bottom Vacuum is not OK");
+            MESALog(@"[Error]AppDelegate.SafetyCheck, Bottom Vacuum is not OK");
             [self showMessage:@"[Error] Bottom Vacuum is not OK" inColor:[NSColor redColor]];
             return false;
         }
+        //matthew 2023-08-27
+        // on Short Cylinder
+        [self StartCylinder:DO_SHORT_CYLINDER_ON:DI_SHORT_CYLINDER_WORK:@"DO_SHORT_CYLINDER_ON"];
+        //// off  Short Cylinder
+        [self StartCylinder:DO_SHORT_CYLINDER_OFF:DI_SHORT_CYLINDER_INITIAl:@"DO_SHORT_CYLINDER_OFF"];
         
+        // on long Cylinder
+        [self StartCylinder:DO_LONG_CYLINDER_ON:DI_LEFT_LONG_CYLINDER_WORK:@"DO_LONG_CYLINDER_ON"];
+        
+        // off long Cylinder
+        [self StartCylinder:DO_LONG_CYLINDER_OFF:DI_LEFT_LONG_CYLINDER_INITIAl:@"DO_LONG_CYLINDER_OFF"];
+        
+        
+        // on Short Cylinder
+        [self StartCylinder:DO_SHORT_CYLINDER_ON:DI_SHORT_CYLINDER_WORK:@"DO_SHORT_CYLINDER_ON"];
+        // on long Cylinder
+        [self StartCylinder:DO_LONG_CYLINDER_ON:DI_LEFT_LONG_CYLINDER_WORK:@"DO_LONG_CYLINDER_ON"];
+       //end matthew
         [_motion setOutput:DO_USB_CYLINDER toState:IO_ON];      // plug USB cable
 
         // (6) check USB plug successfully or not
@@ -1317,7 +1440,7 @@ CFDataRef sgReturn;
             MESALog(@"(vi) USB plug in successfully");
         }
         else{
-            MESALog(@"[Error]AppDelegate.macbookSafetyCheck, USB is not put properly");
+            MESALog(@"[Error]AppDelegate.SafetyCheck, USB is not put properly");
             [self showMessage:@"[Error] USB not put properly" inColor:[NSColor redColor]];
             //Turn OFF front green light
             [_motion setOutput:DO_FRONT_LED toState:IO_OFF];
@@ -1331,13 +1454,20 @@ CFDataRef sgReturn;
         [_motion setOutput:DO_FRONT_LED toState:IO_OFF];
     }
     
+    
     isForceQuitPID = false;
     
     return true;
 }
+- (bool)StartCylinder:(int) DO_Port:(int)DI_Port:(NSString *)DO_Name {
+     
+    return true;
+}
+
+
 
 -(bool)macbookReleaseWithCleanning:(bool)isCountCleanning{
-    
+
     _isDutReleasing = true;             //For stop Axis used
     _isInterruptDutRelease = false;     //This flag only be set to TRUE in Googol waitMotor method, for stop Axis used
     _isReleaseDutFinish = false;        //For reply DUT used
@@ -1356,6 +1486,13 @@ CFDataRef sgReturn;
     if (isAutoReleaseDUT == false) {
         // remove USB first
         MESALog(@"[DUT unload] release USB");
+        //matthew 2023-08- 28
+        //// off  Short Cylinder
+        [self StartCylinder:DO_SHORT_CYLINDER_OFF:DI_SHORT_CYLINDER_INITIAl:@"DO_SHORT_CYLINDER_OFF"];
+        
+        // off long Cylinder
+        [self StartCylinder:DO_LONG_CYLINDER_OFF:DI_LEFT_LONG_CYLINDER_INITIAl:@"DO_LONG_CYLINDER_OFF"];
+        //end matthew
         [_motion setOutput:DO_USB_CYLINDER toState:IO_OFF];
         while (![_motion getSignal:INPUT portStatus:DI_USB_CYLINDER_BACK_LIMIT]){
             [NSThread sleepForTimeInterval:0.005];
@@ -1410,22 +1547,34 @@ CFDataRef sgReturn;
         return false;
     }
     
-    _isReleaseDutFinish = true;     // put this flag here because we wants some times for fixture replys DUT "DUT release finish"
+    _isReleaseDutFinish = true;     // put this flag here bezcause we wants some times for fixture replys DUT "DUT release finish"
 
     //停真空
     [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
     
     // 噴氣
     [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_ON];
+    //matthew 2023-09-22 背部噴氣
+    [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
+    [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_ON];
+    //end by matthew
     
     [NSThread sleepForTimeInterval:0.3];
     
     // 停噴氣
     [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
+    [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
     
     if (isAutoReleaseDUT == true) {
         // remove USB
-        MESALog(@"[DUT unload] release USB");
+        MESALog(@"[DUT unload] release USBs");
+        //matthew 2023-08- 28
+        //// off  Short Cylinder
+        [self StartCylinder:DO_SHORT_CYLINDER_OFF:DI_SHORT_CYLINDER_INITIAl:@"DO_SHORT_CYLINDER_OFF"];
+        
+        // off long Cylinder
+        [self StartCylinder:DO_LONG_CYLINDER_OFF:DI_LEFT_LONG_CYLINDER_INITIAl:@"DO_LONG_CYLINDER_OFF"];
+        //end matthew
         [_motion setOutput:DO_USB_CYLINDER toState:IO_OFF];
         while (![_motion getSignal:INPUT portStatus:DI_USB_CYLINDER_BACK_LIMIT]){
             [NSThread sleepForTimeInterval:0.005];
@@ -1767,11 +1916,14 @@ CFDataRef sgReturn;
         [_motion waitMotor:AXIS_Z2];
         
         if (isMacbook) {
-            MESALog(@"offset x = %f, offset y = %f", offsetX, offsetY);
-            [_motion goTo:AXIS_X withPosition:_posProbe1X - offsetY];
-            [_motion goTo:AXIS_Y withPosition:_posProbe1Y + offsetX];
+            MESALog(@" isMacbook offset x = %f, offset y = %f", offsetX, offsetY);
+            MESALog(@"Go to  Probe Positionx = %f, offset y = %f", _posProbe1X - offsetX, _posProbe1Y + offsetY);
+            [_motion goTo:AXIS_X withPosition:_posProbe1X - offsetX];
+            [_motion goTo:AXIS_Y withPosition:_posProbe1Y + offsetY];
         }
         else{
+            MESALog(@"offset x = %f, offset y = %f", offsetX, offsetY);
+            MESALog(@"Go to  Probe Positionx = %f, offset y = %f", _posProbe1X + offsetX, _posProbe1Y + offsetY);
             [_motion goTo:AXIS_X withPosition:_posProbe1X + offsetX];
             [_motion goTo:AXIS_Y withPosition:_posProbe1Y + offsetY];
         }
@@ -2512,46 +2664,61 @@ CFDataRef sgReturn;
 }
 
 - (void) pingCamera{
-    
-    tPvUint32 exp;
-    tPvErr e;
-    
-    e = [_camera getUint32:"ExposureValue" :&exp];
-    
-    if(e == ePvErrSuccess){
-        //MESALog(@"Camera connection OK");
-    }
-    else if(e == ePvErrUnplugged || ePvErrBadHandle){
-        MESALog(@"Camera disconnected!!!!!!!!!!!!!!");
-        [self reconnectCamera:e];
+    @try {
+        
+        tPvUint32 exp;
+        tPvErr e;
+        
+        e = [_camera getUint32:"ExposureValue" :&exp];
+        
+        if(e == ePvErrSuccess){
+            //MESALog(@"Camera connection OK");
+        }
+        else if(e == ePvErrUnplugged || ePvErrBadHandle){
+            MESALog(@"Camera disconnected!!!!!!!!!!!!!!");
+            [self reconnectCamera:e];
+        }
+    } @catch (NSException *exception) {
+        MESALog( @"Error on pingCamera: %@", exception.name);
+        MESALog( @"Error on pingCamera Reason: %@", exception.reason );
+    } @finally {
+        
     }
 
 }
 
 - (void) pingMotion{
-    bool isGoogolAlive = [_motion pingGoogol];
-    
-    if (isGoogolAlive == false && isGoogolAlive == false){      // last cycle and current cycle both report googol is disconnect
+    @try {
+        bool isGoogolAlive = [_motion pingGoogol];
         
-        // stop timer
-        [_pingMotionTimer invalidate];
-        _pingMotionTimer = nil;
+        if (isGoogolAlive == false && isGoogolAlive == false){      // last cycle and current cycle both report googol is disconnect
+            
+            // stop timer
+            [_pingMotionTimer invalidate];
+            _pingMotionTimer = nil;
 
-        [self showMessage:@"[Error] Googol is Disconnect" inColor:[NSColor redColor]];
+            [self showMessage:@"[Error] Googol is Disconnect" inColor:[NSColor redColor]];
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                NSAlert *alert = [[NSAlert alloc] init];
+                alert.messageText = @"Motion controller disconnected. Please restart motion controller then relaunch this app";
+                [alert runModal];
+            });
+            [self closeAppWithSaveLog];
+
+        }
+        else if (isGoogolAlive == false && isGoogolAlive == true){
+            MESALog(@"Gogole disconnected in last cycle but reconnent successfully now");
+        }
         
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = @"Motion controller disconnect. Please restart motion controller then relaunch this app";
-            [alert runModal];
-        });
-        [self closeAppWithSaveLog];
-
-    }
-    else if (isGoogolAlive == false && isGoogolAlive == true){
-        MESALog(@"Gogole disconnected in last cycle but reconnent successfully now");
+        _prevIsGoogolAlive = isGoogolAlive;
+    } @catch (NSException *exception) {
+        MESALog( @"Error on pingMotion: %@", exception.name);
+        MESALog( @"Error on pingMotion Reason: %@", exception.reason );
+    } @finally {
+        
     }
     
-    _prevIsGoogolAlive = isGoogolAlive;
 }
 
 #pragma mark - MESA serial delegate methods implementation
@@ -2666,12 +2833,13 @@ CFDataRef sgReturn;
         if ([command length] == 0) return;
     
             //if (!([_motion getSignal:INPUT portStatus:DI_DOOR] && [_motion getSignal:INPUT portStatus:DI_DOOR_CYLINDER_DOWN_LIMIT])) {
-            if (([_motion getSignal:INPUT portStatus:DI_DOOR] == false) || (isMacbook && [_motion getSignal:INPUT portStatus:DI_FRONT_DOOR] == true)){
+/*            if (([_motion getSignal:INPUT portStatus:DI_DOOR] == false) || (isMacbook && [_motion getSignal:INPUT portStatus:DI_FRONT_DOOR] == true)){
                 [self showMessage:@"[Error] Door opened!" inColor:[NSColor redColor]];
                 return;
             }
             else
             {
+*/
                 if ([command characterAtIndex:1] == '2' && [command characterAtIndex:3] == '6')//ack = received
                 {
                     [self commandAcknowledge:command];
@@ -3245,7 +3413,7 @@ CFDataRef sgReturn;
                     [self commandAcknowledge:outputString];
                     
                 }
-            }
+            //}
         //}
 }
 

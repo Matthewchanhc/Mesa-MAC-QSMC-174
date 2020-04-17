@@ -6,15 +6,15 @@
 	<dict>
 		<key>Resources/Base.lproj/MainMenu.nib</key>
 		<data>
-		AcMdkAqFwJGABbb64odU0vYvpRE=
+		CQ4EGOjig4k+qKMIO9Yz5cfELQo=
 		</data>
 		<key>Resources/Calibration.nib</key>
 		<data>
-		F15Jbjq9FDl5BVdnXOJ6ID6X1q4=
+		P5yNTTirHr9EZUj2XmHbUjlYnVw=
 		</data>
 		<key>Resources/CalibrationMacBook.nib</key>
 		<data>
-		9P4HE54w1+jFtCqyyycygxNbW4E=
+		dEuWII9gPMIxngNqzyAltIG4tDA=
 		</data>
 		<key>Resources/CirclePara.plist</key>
 		<data>
@@ -34,7 +34,7 @@
 		</data>
 		<key>Resources/settings.plist</key>
 		<data>
-		FuqwLqEEzXaOkiuTyPI7LxtT2RU=
+		vKUAiqS/acjHIWo3uemZM72uf6U=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -43,21 +43,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			v3kovhN6E/AdR9KZnZxjgwhPXg0hJjwMuQJB4v08UNE=
+			qVeG0QH2tfvqPkj8BrLSID/Hc9k4+uWmRMP5jLQfxRE=
 			</data>
 		</dict>
 		<key>Resources/Calibration.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			c01Eti/aSzdG1p+nKZYlb7Y3m9fTZ617r+nwnVuOpn0=
+			G0gn3+7aCYXaEuuD1lOgNpbQsTG9Y/L4zx2y8LoIqM8=
 			</data>
 		</dict>
 		<key>Resources/CalibrationMacBook.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			m7H8yNmCTPEhFeE01lnmi+mZ99kC2Vn0dfl5Af9qLVk=
+			L6yqvTmIwkTGkS6TlTQgDXtQMLrCixn8P4GZcxKGAtw=
 			</data>
 		</dict>
 		<key>Resources/CirclePara.plist</key>
@@ -92,7 +92,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			U0jhXVsLWceOtswRDAJOamYO68DqX2bG6qgAxC+xXRQ=
+			/I1WMGb6QL7QcaNV3bjNbjEK/8T5quIShvR2KAQMcu4=
 			</data>
 		</dict>
 	</dict>

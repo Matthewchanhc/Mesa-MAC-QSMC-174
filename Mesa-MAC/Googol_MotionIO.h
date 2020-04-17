@@ -57,6 +57,33 @@
 #define DO_FRONT_LED                    13
 #define DO_DOOR_LOCK                    14
 
+//
+
+
+
+//Matthew 2023-08-28  Add Cylinder Io
+
+
+
+
+
+
+ 
+#define DO_SHORT_CYLINDER_ON              16 //短边气缸伸出
+#define DO_LONG_CYLINDER_ON               17  //长气缸伸出 (左&右长气缸伸出)
+#define DO_SHORT_CYLINDER_OFF             18  //短边气缸已松开
+#define DO_LONG_CYLINDER_OFF              19  //长边气缸已松开
+
+
+#define DI_SHORT_CYLINDER_INITIAl              19 //短边气缸初始位
+#define DI_SHORT_CYLINDER_WORK              20  //短边气缸工作位
+#define DI_LEFT_LONG_CYLINDER_INITIAl               21  //左长边气缸初始位
+#define DI_LEFT_LONG_CYLINDER_WORK             22  //左长边气缸工作位
+#define DI_RIGTH_LONG_CYLINDER_INITIAl               23  //右长边气缸初始位
+#define DI_RIGTH_LONG_CYLINDER_WORK             24  //右长边气缸工作位
+
+//end by Matthew
+
 
 //pin 7-15 are OK
 #define DI_BOTTOM_VACUUM_WARNING        7
@@ -223,6 +250,7 @@
 //- (void)stopAxis:(int)axis;
 - (void)stopAxis:(int)axis isOriginalStop_Z:(bool)forceStopZ;
 - (bool)pingGoogol;
+
 //- (void)goTo:(int)axis withPosition:(float)position inMsgMode:(bool)isMsgMode;
 //- (void)waitMotor:(int)axis inMsgMode:(bool)isMsgMode;
 //- (float)getPosition:(int)axis inMsgMode:(bool)isMsgMode;

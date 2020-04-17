@@ -7,7 +7,7 @@
 //
 
 #import "CV_image_processing.h"
-#import "AppDelegate.h"
+//#import "AppDelegate.h"
 
 @implementation CV_image_processing
 
@@ -141,13 +141,25 @@
     int innerCircleRad =    [[_circleParaDictionary objectForKey:@"Inner circle width"] intValue];
     int outerCircleRad =    [[_circleParaDictionary objectForKey:@"Outer circle width"] intValue];
     int deltaAng =          [[_circleParaDictionary objectForKey:@"Delta Angle"] intValue];
-    int kernelType =        [[_circleParaDictionary objectForKey:@"kernel Type"] intValue];
+    int kernelType =        [[_circleParaDictionary objectForKey:@"Kernel Type"] intValue];
     int kernelWidth =       [[_circleParaDictionary objectForKey:@"Kernel Width"] intValue];
     int direction =         [[_circleParaDictionary objectForKey:@"Direction"] intValue];
     int threshold =         [[_circleParaDictionary objectForKey:@"Threshold"] intValue];
     int edgeType =          [[_circleParaDictionary objectForKey:@"Edge type"] intValue];
     int whichEdge =         [[_circleParaDictionary objectForKey:@"Which edge"] intValue];
-    
+
+    MESALog(@"Source image height = %d", source_image.rows);
+    MESALog(@"Source image width = %d", source_image.cols);
+    MESALog(@"Inner circle radius = %d", innerCircleRad);
+    MESALog(@"Outer circle radius = %d", outerCircleRad);
+    MESALog(@"Delta angle = %d", deltaAng);
+    MESALog(@"Kernel Type = %d", kernelType);
+    MESALog(@"Kernel Width = %d", kernelWidth);
+    MESALog(@"Direction = %d", direction);
+    MESALog(@"Threshold = %d", threshold);
+    MESALog(@"Edge type = %d", edgeType);
+    MESALog(@"Which edge = %d", whichEdge);
+
     edgeError err;
     fittedCircle mesaButton;
     edgeInfo edgeResultInfo;
@@ -175,15 +187,16 @@
     else{
         _x = -1;
         _y = -1;
+    
     }
-    
-    MESALog(@"rectangle center = (%f, %f)", _x,_y);
-    
-    
+
+    MESALog(@"Error = %d", err);
+    MESALog(@"circle center = (%f, %f)", _x,_y);
+/*
     if (IMAGESAVING){
         [self saveImagelogs:source_image resultImage:output_image cx:mesaButton.cx cy:mesaButton.cy radius:mesaButton.radius];
     }
-    
+*/
     return output_image;
 }
 
@@ -247,14 +260,14 @@
     
     MESALog(@"rectangle center = (%f, %f)", _x,_y);
     
-    
+/*
     if (IMAGESAVING){
         //Mat croppedImage = drawingImage(cv::Rect(internalImage.cols/2 - 710, internalImage.rows/2 - 710, 1420, 1420));
         //14,March,2016 : save a cropped result image to reduce image size
         Mat croppedImage = output_image(cv::Rect(source_image.cols/2 - (outRectW/2+10), source_image.rows/2 - (outRectH/2+10), outRectW+20, outRectH+20));
         [self saveImagelogs:source_image resultImage:croppedImage cx:mesaButton.Center.x cy:mesaButton.Center.y radius:-100];
     }
-    
+*/
     return output_image;
 
 }

@@ -935,7 +935,13 @@
     
     cv::line(drawingImage, rectangle.A, rectangle.C, lineColor, 4, 8, 0);
     cv::line(drawingImage, rectangle.B, rectangle.D, lineColor, 4, 8, 0);
+    //matthew 2023-09-22 draw centre
+    int xOffset = int(round(50 * sin(45)));
+    int yOffset = int(round(50 * cos(45)));
+    cv::line(drawingImage, cv::Point(rectangle.Center.x-xOffset,rectangle.Center.y+yOffset), cv::Point(rectangle.Center.x+xOffset, rectangle.Center.y-yOffset), Scalar(0,255,0),5);
+    cv::line(drawingImage, cv::Point(rectangle.Center.x-xOffset, rectangle.Center.y-yOffset), cv::Point(rectangle.Center.x+xOffset, rectangle.Center.y+yOffset), Scalar(0,255,0),5);
     
+    //end by matthew
     // draw center point
     if (rectangle.Center.x > drawingImage.cols || rectangle.Center.x < 0 || rectangle.Center.y > drawingImage.rows || rectangle.Center.y < 0) {
         return centerPointOutOfROI;

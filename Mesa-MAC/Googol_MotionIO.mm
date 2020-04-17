@@ -620,7 +620,7 @@ bool allAxisDisableFin;
     [self getInput:DI_START_LEFT];
     [self getInput:DI_START_RIGHT];
     [self getInput:DI_POWER];
-    [self getInput:DI_DOOR];
+//    [self getInput:DI_DOOR];
     [self getInput:DI_Z1_WARNING];
     [self getInput:DI_Z2_WARNING];
     
@@ -648,6 +648,8 @@ bool allAxisDisableFin;
             exit(0);
         }
     }
+  
+
     
     [self setOutput:DO_SIGNAL_GREEN toState:IO_OFF];
     [self setOutput:DO_SIGNAL_YELLOW toState:IO_ON];
@@ -661,10 +663,13 @@ bool allAxisDisableFin;
     [self setGotoVelocity:AXIS_Z2 withVelocity:_z2Velocity];
     [self setGoHomeVelocity:_homeVelocity];
     
-
+    [self setOutput:DO_DOOR_LOCK toState: IO_ON];
     [self setOutput:DO_Z1_BRAKE toState:IO_ON];
     [self setOutput:DO_Z2_BRAKE toState:IO_ON];
     
+    
+    
+ 
     // Stop Z1
     MESALog(@"Stop axis %@", [_axes objectAtIndex:AXIS_Z1]);
     // Stop Axis first
@@ -686,7 +691,7 @@ bool allAxisDisableFin;
     // Stop X and Y
     [self stopAxis:AXIS_X isOriginalStop_Z:true];
     [self stopAxis:AXIS_Y isOriginalStop_Z:true];
-    
+/*
     //Ask OP to open door first, otherwirse, it will fall into intfity Hbb mode
     [self setOutput:DO_DOOR_LOCK toState: IO_OFF];  //Unlock front door lock
     
@@ -708,23 +713,33 @@ bool allAxisDisableFin;
             [alert runModal];
         });
     }
-    
+    */
     //Check door close or not
-    if (![self getInput:DI_FRONT_DOOR]){
-        MESALog(@"Door close when init, lock door now");
-        [self setOutput:DO_DOOR_LOCK toState: IO_ON];
-        [NSThread sleepForTimeInterval: 0.5];
-        
-        // If door is closed, clear Hbb
-        [self disableAxis];
-        [self enableAxis : false];
+     
+    [self setOutput:DO_DOOR_LOCK toState: IO_OFF];
+    while ([self getInput:DI_FRONT_DOOR] == false){
+        dispatch_sync(dispatch_get_main_queue(), ^{
+           
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"Please OPEN front door and then click OK";
+            MESALog(@"Request OP open door when system init");
+            [alert runModal];
+        });
     }
-    else{
-        MESALog(@"Door is not close when init");
+ 
+    while ([self getInput:DI_FRONT_DOOR] == true){
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"Please CLOSE front door and then click OK";
+            MESALog(@"Request OP close foor when system init");
+            [alert runModal];
+        });
     }
+    [self setOutput:DO_DOOR_LOCK toState: IO_ON];
+    [self disableAxis];
+    [self enableAxis : false];
     
-    
-    // Z1 and Z2 axes go home
+     // Z1 and Z2 axes go home
     [self goHome:AXIS_Z1];
     [self goHome:AXIS_Z2];
     
@@ -733,10 +748,10 @@ bool allAxisDisableFin;
     
     [self getPosition:AXIS_Z1];
     [self getPosition:AXIS_Z2];
-    
+    //2023-10-18 matthew enable for QSMC
     // Alert if DUT inside fixture before X Y homing
     while ([self getInput:DI_MB_BOTTOM_TOUCH_1] || [self getInput:DI_MB_BOTTOM_TOUCH_2]) {
-        
+         
         if ([self getInput:DI_USB_CYLINDER_FRONT_LIMIT]) {
             [self setOutput:DO_USB_CYLINDER toState:IO_OFF];
         }
@@ -757,6 +772,7 @@ bool allAxisDisableFin;
             [self setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
         }
         
+        [self disableAxis];
         [self setOutput:DO_DOOR_LOCK toState:IO_OFF];    // unlock door if DUT inside fixture
         
         dispatch_sync(dispatch_get_main_queue(), ^{
@@ -768,7 +784,8 @@ bool allAxisDisableFin;
         [NSThread sleepForTimeInterval:0.5];
         
     }
-    
+    [self enableAxis:false];
+    [self setOutput:DO_DOOR_LOCK toState: IO_ON];
     //Double check door close or not
     if (![self getInput:DI_FRONT_DOOR]){
         MESALog(@"Door close when init, lock door now");
@@ -814,8 +831,9 @@ bool allAxisDisableFin;
         
         [self setOutput:DO_FRONT_LED toState:IO_ON];
 
-        [self setOutput:DO_DOOR_LOCK toState: IO_OFF];
+       //[self setOutput:DO_DOOR_LOCK toState: IO_OFF];
     }
+    [self setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
     
     [self setOutput:DO_SIGNAL_GREEN toState:IO_ON];
     [self setOutput:DO_SIGNAL_YELLOW toState:IO_OFF];
@@ -1027,12 +1045,13 @@ bool allAxisDisableFin;
     {
         while((![[_axesHomeStatus objectAtIndex:axis] boolValue]) && !STOPTEST)
         {
-            if (isMacbook && [self getSignal:INPUT portStatus:DI_FRONT_DOOR] && CALIBRATION == false) {
-                for(int i=1; i<=4; i++)
+//            if (isMacbook && [self getSignal:INPUT portStatus:DI_FRONT_DOOR] && CALIBRATION == false) {
+/*            if (isMacbook && CALIBRATION == false) {
+            for(int i=1; i<=4; i++)
                 {
                     [self stopAxis:i isOriginalStop_Z:true];
                 }
-                
+
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     NSAlert *alert = [[NSAlert alloc] init];
                     alert.messageText = @"Door is open when homing, please close the door and reopen this app";
@@ -1040,12 +1059,14 @@ bool allAxisDisableFin;
                 });
                 MESALog(@"Door is open when axis homing");
                 [_app closeAppWithSaveLog];
+
             }
             else{
-                @autoreleasepool {
+*/                @autoreleasepool {
                     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
                 }
-            }
+//            }
+
         }
     }
     
@@ -1068,8 +1089,8 @@ bool allAxisDisableFin;
             //MESALog(@"setup timer to %@",_runloopTimer.fireDate);
             while([[_axesMoveStatus objectAtIndex:axis] boolValue] && !STOPTEST && !_timeOut)
             {
-                if (isMacbook && [self getSignal:INPUT portStatus:DI_FRONT_DOOR] && CALIBRATION == false) {
-                    
+/*                if (isMacbook && [self getSignal:INPUT portStatus:DI_FRONT_DOOR] && CALIBRATION == false) {
+
                     //for release DUT method used
                     if (_app.isDutReleasing){
                         _app.isInterruptDutRelease = true;
@@ -1078,19 +1099,20 @@ bool allAxisDisableFin;
                     //stop all axis when door is open during axis moving
                     //for(int i=1; i<=4; i++)
                     //{
-                    [self stopAxis:axis isOriginalStop_Z:false];
+                    //[self stopAxis:axis isOriginalStop_Z:false];
                     //}
                     
                     // set STOPTEST to ture to break this loop;
                     STOPTEST = true;
-                }
+//                }
                 else{
-                    @autoreleasepool {
+*/
+                @autoreleasepool {
                         //charlie changes 0.5 to 0.05 for stop Motor in faster respond when door is open
                         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
                     }
                 }
-            }
+//            }
             
             if (_timeOut && [[_axesMoveStatus objectAtIndex:axis] boolValue]) {
                 @autoreleasepool {
@@ -1221,7 +1243,6 @@ bool allAxisDisableFin;
 
     }
 }
-
 - (bool) pingGoogol{
     
     [NSThread sleepForTimeInterval:0.05]; // add by charlie, because googol not stable
@@ -1237,7 +1258,20 @@ bool allAxisDisableFin;
         count++;
         
         if (count > 50)
-            return false;
+        {
+            MESALog(@"Motion controller disconnected!");
+
+            NSString *ip_addr   = [_motionParams objectForKey:@"IP_ADDR"];
+            int port            = [[_motionParams objectForKey:@"TCP_PORT"] intValue];
+            [_tcpip close];
+            
+            [NSThread sleepForTimeInterval : 3];
+
+            MESALog(@"Reopening motion controller with IP=%@, Port=%d", ip_addr, port);
+            // Connect to the motion controller
+            [_tcpip connectWithIP:ip_addr andPort:port];
+        }
+//        return false;
     }
     
     return true;
@@ -1448,11 +1482,11 @@ bool allAxisDisableFin;
                 portCurrentState = (portState == IO_ON)? @"ON" : @"OFF";
                 break;
                 
-            case DI_DOOR:
+/*            case DI_DOOR:
                 portName = @"Fixture back door";
                 portCurrentState = (portState == IO_ON)? @"closed" : @"opened";
                 break;
-                
+*/
             case DI_Z1_WARNING:
                 portName = @"Z1 warning sensor";
                 portCurrentState = (portState == IO_ON)? @"ON" : @"OFF";
@@ -1610,12 +1644,12 @@ bool allAxisDisableFin;
                 portName = @"Front LED";
                 portCurrentState = (portState == IO_ON)? @"ON" : @"OFF";
                 break;
-                
+
             case DO_DOOR_LOCK:
                 portName = @"Door lock trigger signal";
                 portCurrentState = (portState == IO_ON)? @"Turned ON" : @"Turned OFF";
                 break;
-                
+
             default:
                 break;
         }

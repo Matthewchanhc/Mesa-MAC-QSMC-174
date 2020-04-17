@@ -77,7 +77,7 @@
 }
 
 +(void) SavePlist:(NSString *)plist withPara:(NSMutableDictionary *)paraDic{
-    const NSString *plistPath = @"/vault/MesaFixture/MesaMacConfig/";
+    NSString *plistPath = @"/vault/MesaFixture/MesaMacConfig/";
     plistPath = [plistPath stringByAppendingString:plist];
     plistPath = [plistPath stringByAppendingString:@".plist"];
     

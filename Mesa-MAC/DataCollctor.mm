@@ -145,7 +145,7 @@ bool MESALog(NSString *format, ...)NS_FORMAT_FUNCTION(1,2)
     va_start(args, format);
     NSString *msg = [[NSString alloc] initWithFormat:format arguments:args];
     va_end(args);
-    NSLog(msg);
+    NSLog(@"%@", msg);
     
     if(defaultSpider == nil)
     {

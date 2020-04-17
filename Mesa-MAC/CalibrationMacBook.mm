@@ -160,161 +160,166 @@
 
 - (void) UpdateUI {
     @autoreleasepool {
-        int cnt = 0;
-        
+
+        __block int cnt = 0;
+
         while(_updateUIThreadRunning) {
-            // Input signals indication
-            [_inEStop setColor:[_app.motion getSignal:INPUT portStatus:DI_ESTOP] ?[NSColor greenColor]:[NSColor redColor]];
-            [_inReset setColor:[_app.motion getSignal:INPUT portStatus:DI_RESET]?[NSColor greenColor]:[NSColor redColor]];
-            [_inStartLeft setColor:[_app.motion getSignal:INPUT portStatus:DI_START_LEFT]?[NSColor greenColor]:[NSColor redColor]];
-            [_inStartRight setColor:[_app.motion getSignal:INPUT portStatus:DI_START_RIGHT]?[NSColor greenColor]:[NSColor redColor]];
-            [_inPower setColor:[_app.motion getSignal:INPUT portStatus:DI_POWER]?[NSColor greenColor]:[NSColor redColor]];
-            [_inDoor setColor:[_app.motion getSignal:INPUT portStatus:DI_DOOR]?[NSColor greenColor]:[NSColor redColor]];
             
-            [_inZ1Warning setColor:[_app.motion getSignal:INPUT portStatus:DI_Z1_WARNING]?[NSColor greenColor]:[NSColor redColor]];
-            [_inZ2Warning setColor:[_app.motion getSignal:INPUT portStatus:DI_Z2_WARNING]?[NSColor greenColor]:[NSColor redColor]];
-            
-//            /*------new DI for mesa mac macbook------*/
-            [_inBotVacuumWarning setColor:[_app.motion getSignal:INPUT portStatus:DI_BOTTOM_VACUUM_WARNING]?[NSColor greenColor]:[NSColor redColor]];
-            [_inTopVacuumWarning setColor:[_app.motion getSignal:INPUT portStatus:DI_TOP_VACUUM_WARNING]?[NSColor greenColor]:[NSColor redColor]];
-            
-            [_inUSBCylinderFrontLimit setColor:[_app.motion getSignal:INPUT portStatus:DI_USB_CYLINDER_FRONT_LIMIT]?[NSColor greenColor]:[NSColor redColor]];
-            [_inUSBCylinderBackLimit setColor:[_app.motion getSignal:INPUT portStatus:DI_USB_CYLINDER_BACK_LIMIT]?[NSColor greenColor]:[NSColor redColor]];
-            
-            
-            
-            [_inTopSensor1 setColor:[_app.motion getSignal:INPUT portStatus:DI_MB_TOP_TOUCH_1]?[NSColor greenColor]:[NSColor redColor]];
-            [_inTopSensor2 setColor:[_app.motion getSignal:INPUT portStatus:DI_MB_TOP_TOUCH_2]?[NSColor greenColor]:[NSColor redColor]];
-            
+            dispatch_sync(dispatch_get_main_queue(), ^{
 
-            [_inBotSensor1 setColor:[_app.motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_1]?[NSColor greenColor]:[NSColor redColor]];
-            [_inBotSensor2 setColor:[_app.motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2]?[NSColor greenColor]:[NSColor redColor]];
-            
-            [_inFrontDoor setColor:[_app.motion getSignal:INPUT portStatus:DI_FRONT_DOOR]?[NSColor greenColor]:[NSColor redColor]];
-            
-            [_inDoorLock setColor:[_app.motion getSignal:INPUT portStatus:DI_FRONT_DOOR_LOCKED]?[NSColor greenColor]:[NSColor redColor]];
-//            /*------new DI for mesa mac END------*/
+                // Input signals indication
+                [_inEStop setColor:[_app.motion getSignal:INPUT portStatus:DI_ESTOP] ?[NSColor greenColor]:[NSColor redColor]];
+                [_inReset setColor:[_app.motion getSignal:INPUT portStatus:DI_RESET]?[NSColor greenColor]:[NSColor redColor]];
+                [_inStartLeft setColor:[_app.motion getSignal:INPUT portStatus:DI_START_LEFT]?[NSColor greenColor]:[NSColor redColor]];
+                [_inStartRight setColor:[_app.motion getSignal:INPUT portStatus:DI_START_RIGHT]?[NSColor greenColor]:[NSColor redColor]];
+                [_inPower setColor:[_app.motion getSignal:INPUT portStatus:DI_POWER]?[NSColor greenColor]:[NSColor redColor]];
+//                [_inDoor setColor:[_app.motion getSignal:INPUT portStatus:DI_DOOR]?[NSColor greenColor]:[NSColor redColor]];
+                
+                [_inZ1Warning setColor:[_app.motion getSignal:INPUT portStatus:DI_Z1_WARNING]?[NSColor greenColor]:[NSColor redColor]];
+                [_inZ2Warning setColor:[_app.motion getSignal:INPUT portStatus:DI_Z2_WARNING]?[NSColor greenColor]:[NSColor redColor]];
+                
+    //            /*------new DI for mesa mac macbook------*/
+                [_inBotVacuumWarning setColor:[_app.motion getSignal:INPUT portStatus:DI_BOTTOM_VACUUM_WARNING]?[NSColor greenColor]:[NSColor redColor]];
+                [_inTopVacuumWarning setColor:[_app.motion getSignal:INPUT portStatus:DI_TOP_VACUUM_WARNING]?[NSColor greenColor]:[NSColor redColor]];
+                
+                [_inUSBCylinderFrontLimit setColor:[_app.motion getSignal:INPUT portStatus:DI_USB_CYLINDER_FRONT_LIMIT]?[NSColor greenColor]:[NSColor redColor]];
+                [_inUSBCylinderBackLimit setColor:[_app.motion getSignal:INPUT portStatus:DI_USB_CYLINDER_BACK_LIMIT]?[NSColor greenColor]:[NSColor redColor]];
+                
+                
+                
+                [_inTopSensor1 setColor:[_app.motion getSignal:INPUT portStatus:DI_MB_TOP_TOUCH_1]?[NSColor greenColor]:[NSColor redColor]];
+                [_inTopSensor2 setColor:[_app.motion getSignal:INPUT portStatus:DI_MB_TOP_TOUCH_2]?[NSColor greenColor]:[NSColor redColor]];
+                
+                [_inBotSensor1 setColor:[_app.motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_1]?[NSColor greenColor]:[NSColor redColor]];
+                [_inBotSensor2 setColor:[_app.motion getSignal:INPUT portStatus:DI_MB_BOTTOM_TOUCH_2]?[NSColor greenColor]:[NSColor redColor]];
+                
+                [_inFrontDoor setColor:[_app.motion getSignal:INPUT portStatus:DI_FRONT_DOOR]?[NSColor greenColor]:[NSColor redColor]];
+                
+                [_inDoorLock setColor:[_app.motion getSignal:INPUT portStatus:DI_FRONT_DOOR_LOCKED]?[NSColor greenColor]:[NSColor redColor]];
+    //            /*------new DI for mesa mac END------*/
 
-            
-            if(![[_app.motion.axesMoveStatus objectAtIndex:AXIS_X] boolValue])
-            {
-                _textCurrentX.floatValue = [[_app.motion.axesPosition objectAtIndex:AXIS_X] floatValue];
-//                _textCurrentX.stringValue = [self formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_X] floatValue]];
-            }
-            if(![[_app.motion.axesMoveStatus objectAtIndex:AXIS_Y] boolValue])
-            {
-                _textCurrentY.floatValue = [[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue];
-//                _textCurrentY.stringValue = [self formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue]];
-            }
-            if(![[_app.motion.axesMoveStatus objectAtIndex:AXIS_Z1] boolValue])
-            {
-                _textCurrentZ1.floatValue = [[_app.motion.axesPosition objectAtIndex:AXIS_Z1] floatValue];
-//                _textCurrentZ1.stringValue = [self formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Z1] floatValue]];
-            }
-            if(![[_app.motion.axesMoveStatus objectAtIndex:AXIS_Z2] boolValue])
-            {
-                _textCurrentZ2.floatValue = [[_app.motion.axesPosition objectAtIndex:AXIS_Z2] floatValue];
-//                _textCurrentZ2.stringValue = [self formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Z2] floatValue]];
-            }
-            
-            //Output Signal Zone
-            _outZ1Clear.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_Z1_FORCE_CLEAR];
-            _outZ2Clear.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_Z2_FORCE_CLEAR];
-            
-            _outZ1Brake.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_Z1_BRAKE];
-            _outZ2Brake.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_Z2_BRAKE];
-            
-            _outGreen.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_SIGNAL_GREEN];
-            _outRed.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_SIGNAL_RED];
-            _outYellow.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_SIGNAL_YELLOW];
-            
-            /* ---------New DO for mesa mac Macbook------*/
-            _outBotVacuun.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_BOTTOM_VACUUM];
-            _outTopVacuun.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_TOP_VACUUM];
-            _outUSBCylinder.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_USB_CYLINDER];
-            _outBotBlow.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_BOTTOM_ANTI_VACUUM];
-            _outTopBlow.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_TOP_ANTI_VACUUM];
+                
+                if(![[_app.motion.axesMoveStatus objectAtIndex:AXIS_X] boolValue])
+                {
+                    _textCurrentX.floatValue = [[_app.motion.axesPosition objectAtIndex:AXIS_X] floatValue];
+    //                _textCurrentX.stringValue = [self formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_X] floatValue]];
+                }
+                if(![[_app.motion.axesMoveStatus objectAtIndex:AXIS_Y] boolValue])
+                {
+                    _textCurrentY.floatValue = [[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue];
+    //                _textCurrentY.stringValue = [self formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue]];
+                }
+                if(![[_app.motion.axesMoveStatus objectAtIndex:AXIS_Z1] boolValue])
+                {
+                    _textCurrentZ1.floatValue = [[_app.motion.axesPosition objectAtIndex:AXIS_Z1] floatValue];
+    //                _textCurrentZ1.stringValue = [self formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Z1] floatValue]];
+                }
+                if(![[_app.motion.axesMoveStatus objectAtIndex:AXIS_Z2] boolValue])
+                {
+                    _textCurrentZ2.floatValue = [[_app.motion.axesPosition objectAtIndex:AXIS_Z2] floatValue];
+    //                _textCurrentZ2.stringValue = [self formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Z2] floatValue]];
+                }
+                
+                //Output Signal Zone
+                _outZ1Clear.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_Z1_FORCE_CLEAR];
+                _outZ2Clear.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_Z2_FORCE_CLEAR];
+                
+                _outZ1Brake.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_Z1_BRAKE];
+                _outZ2Brake.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_Z2_BRAKE];
+                
+                _outGreen.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_SIGNAL_GREEN];
+                _outRed.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_SIGNAL_RED];
+                _outYellow.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_SIGNAL_YELLOW];
+                
+                /* ---------New DO for mesa mac Macbook------*/
+                _outBotVacuun.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_BOTTOM_VACUUM];
+                _outTopVacuun.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_TOP_VACUUM];
+                _outUSBCylinder.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_USB_CYLINDER];
+                _outBotBlow.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_BOTTOM_ANTI_VACUUM];
+                _outTopBlow.intValue = [_app.motion getSignal:OUTPUT portStatus:DO_TOP_ANTI_VACUUM];
 
-            
-            if (++cnt == 30) {
-                if (!_app.probeDowning) {
-                    if ([TestInfoController isTestMode]) {
-                        MESALog(@"[Cal page] GET FORCE NOW");
+                
+                if (++cnt == 30) {
+                    if (!_app.probeDowning) {
+                        if ([TestInfoController isTestMode]) {
+                            MESALog(@"[Cal page] GET FORCE NOW");
+                        }
+                        // _gettingForce = true;
+                        [_app.motion getForce:AXIS_Z1];
+                        [_app.motion getForce:AXIS_Z2];
+                        // _gettingForce = false;
                     }
-                    // _gettingForce = true;
-                    [_app.motion getForce:AXIS_Z1];
-                    [_app.motion getForce:AXIS_Z2];
-                    // _gettingForce = false;
+                    else{
+                        if ([TestInfoController isTestMode]) {
+                            MESALog(@"[Cal page] DO NOT GET FORCE DUE TO PROBE DOWN NOW");
+                        }
+                    }
+                    cnt = 0;
+                }
+                
+                _textForceZ1.floatValue = (_app.motion.z1Force>0.01)?_app.motion.z1Force:0;
+                _textForceZ2.floatValue = (_app.motion.z2Force>0.01)?_app.motion.z2Force:0;
+                
+                if (_textForceZ1.floatValue > 0.05 || _textForceZ2.floatValue > 0.05) {
+                    _xHomeBut.enabled = false;
+                    _xRightBut.enabled = false;
+                    _xLeftBut.enabled = false;
+                    _yHomeBut.enabled = false;
+                    _yInBut.enabled = false;
+                    _yOutBut.enabled = false;
+                    
+                    _xHomeBut.transparent = true;
+                    _xRightBut.transparent = true;
+                    _xLeftBut.transparent = true;
+                    _yHomeBut.transparent = true;
+                    _yInBut.transparent = true;
+                    _yOutBut.transparent = true;
                 }
                 else{
-                    if ([TestInfoController isTestMode]) {
-                        MESALog(@"[Cal page] DO NOT GET FORCE DUE TO PROBE DOWN NOW");
-                    }
+                    _xHomeBut.enabled = true;
+                    _xRightBut.enabled = true;
+                    _xLeftBut.enabled = true;
+                    _yHomeBut.enabled = true;
+                    _yInBut.enabled = true;
+                    _yOutBut.enabled = true;
+                    
+                    _xHomeBut.transparent = false;
+                    _xRightBut.transparent = false;
+                    _xLeftBut.transparent = false;
+                    _yHomeBut.transparent = false;
+                    _yInBut.transparent = false;
+                    _yOutBut.transparent = false;
                 }
-                cnt = 0;
-            }
-            
-            _textForceZ1.floatValue = (_app.motion.z1Force>0.01)?_app.motion.z1Force:0;
-            _textForceZ2.floatValue = (_app.motion.z2Force>0.01)?_app.motion.z2Force:0;
-            
-            if (_textForceZ1.floatValue > 0.05 || _textForceZ2.floatValue > 0.05) {
-                _xHomeBut.enabled = false;
-                _xRightBut.enabled = false;
-                _xLeftBut.enabled = false;
-                _yHomeBut.enabled = false;
-                _yInBut.enabled = false;
-                _yOutBut.enabled = false;
                 
-                _xHomeBut.transparent = true;
-                _xRightBut.transparent = true;
-                _xLeftBut.transparent = true;
-                _yHomeBut.transparent = true;
-                _yInBut.transparent = true;
-                _yOutBut.transparent = true;
-            }
-            else{
-                _xHomeBut.enabled = true;
-                _xRightBut.enabled = true;
-                _xLeftBut.enabled = true;
-                _yHomeBut.enabled = true;
-                _yInBut.enabled = true;
-                _yOutBut.enabled = true;
-                
-                _xHomeBut.transparent = false;
-                _xRightBut.transparent = false;
-                _xLeftBut.transparent = false;
-                _yHomeBut.transparent = false;
-                _yInBut.transparent = false;
-                _yOutBut.transparent = false;
-            }
-            
-//            if (_autoSave.intValue) {
-//                if (_app.myProbeStatus == MESARS232ProbeAtLeft && _app.zProbeStatus == MESARS232ProbeHoverPosition) {
-//                    _posProbe1X.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_X] floatValue]];
-//                    _posProbe1Y.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue]];
-//                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe1X.floatValue] forKey:@"probe1_x"];
-//                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe1Y.floatValue] forKey:@"probe1_y"];
-//                    
-//                    _posProbe1Hover.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Z1] floatValue]];
-//                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe1Hover.floatValue] forKey:@"probe1_hover"];
-//                }
-//                else if (_app.myProbeStatus == MESARS232ProbeAtRight && _app.zProbeStatus == MESARS232ProbeHoverPosition) {
-//                    _posProbe2X.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_X] floatValue]];
-//                    _posProbe2Y.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue]];
-//                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe2X.floatValue] forKey:@"probe2_x"];
-//                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe2Y.floatValue] forKey:@"probe2_y"];
-//                    
-//                    _posProbe2Hover.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Z2] floatValue]];
-//                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe2Hover.floatValue] forKey:@"probe2_hover"];
-//                }
-//            }
-            // MESALog(@"before cal update GUI sleep");
-            //[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
-            // usleep(20000);
+    //            if (_autoSave.intValue) {
+    //                if (_app.myProbeStatus == MESARS232ProbeAtLeft && _app.zProbeStatus == MESARS232ProbeHoverPosition) {
+    //                    _posProbe1X.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_X] floatValue]];
+    //                    _posProbe1Y.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue]];
+    //                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe1X.floatValue] forKey:@"probe1_x"];
+    //                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe1Y.floatValue] forKey:@"probe1_y"];
+    //
+    //                    _posProbe1Hover.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Z1] floatValue]];
+    //                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe1Hover.floatValue] forKey:@"probe1_hover"];
+    //                }
+    //                else if (_app.myProbeStatus == MESARS232ProbeAtRight && _app.zProbeStatus == MESARS232ProbeHoverPosition) {
+    //                    _posProbe2X.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_X] floatValue]];
+    //                    _posProbe2Y.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue]];
+    //                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe2X.floatValue] forKey:@"probe2_x"];
+    //                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe2Y.floatValue] forKey:@"probe2_y"];
+    //
+    //                    _posProbe2Hover.stringValue = [_app formatNumberToString:[[_app.motion.axesPosition objectAtIndex:AXIS_Z2] floatValue]];
+    //                    [_app.settingsDictionary setValue:[NSNumber numberWithFloat:_posProbe2Hover.floatValue] forKey:@"probe2_hover"];
+    //                }
+    //            }
+                // MESALog(@"before cal update GUI sleep");
+                //[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+                // usleep(20000);
 
-            
-            // Charlie change to 1 second for testing
-            //[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+                
+                // Charlie change to 1 second for testing
+                //[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+            });
+
             [NSThread sleepForTimeInterval:0.5];
 
             //MESALog(@"after cal update GUI sleep");
@@ -902,6 +907,9 @@
     [_app paraRefresh];
     _app.light232.brightness = _app.brightness;
 }
+- (IBAction)ClickSaveImage:(id)sender {
+    [_app.camera save_image:YES];
+}
 
 //- (IBAction)clickQuit:(id)sender {
 - (void)clickQuit{
@@ -1215,7 +1223,7 @@
 }
 
 - (IBAction)clickOutLockDoor:(id)sender{
-    [_app.motion setOutput:DO_DOOR_LOCK toState:![_app.motion getSignal:OUTPUT portStatus:DO_DOOR_LOCK]];
+//    [_app.motion setOutput:DO_DOOR_LOCK toState:![_app.motion getSignal:OUTPUT portStatus:DO_DOOR_LOCK]];
 }
 
 - (IBAction)clickClearHbb:(id)sender{

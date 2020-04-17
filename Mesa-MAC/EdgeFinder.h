@@ -14,7 +14,7 @@
 #import <vector>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 @interface EdgeFinder : NSObject{
     
@@ -82,7 +82,7 @@ typedef enum{
 }kernelType;
 
 // Find edge point of each line
-+ (edgeError) FindEdgePointInImage : (Mat) internalImage                      // source image
++ (edgeError) FindEdgePointInImage : (cv::Mat) internalImage                      // source image
                         KernelSize : (int) kernelWidth                        // the size of kernel for convolution
                         KernelType : (int) kernelType                         // which kernel to be used : Original : [-2 -1 0 1 2]; Reveresed : [-1 -2 0 2 1]
                 SearchingDirection : (int) direction                          // edge searching direction : in2out, out2in, bidirectional
@@ -93,9 +93,9 @@ typedef enum{
                   EdgePointsResult : (vector<edgePoint>&) allEdgePoints
                             allSNR : (vector<double>&) allSNR;      // result of edge points of each line
 
-+ (void) drawAllLinesIn : (Mat)drawingImage lines: (vector<roiLine>) lines colour: (char) color;
++ (void) drawAllLinesIn : (cv::Mat)drawingImage lines: (vector<roiLine>) lines colour: (char) color;
 
-+ (void) drawEdgePointsIn : (Mat)drawingImage allEdgePoints : (vector<edgePoint>)allEdgePts colour: (char) color;
++ (void) drawEdgePointsIn : (cv::Mat)drawingImage allEdgePoints : (vector<edgePoint>)allEdgePts colour: (char) color;
 
 + (void) calcInfo : (vector<edgePoint>) allEdgePoints allSNR : (vector<double>)SNR edgeInfo : (edgeInfo&)edgeResultInfo;
 

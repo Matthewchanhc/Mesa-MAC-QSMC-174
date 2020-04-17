@@ -300,6 +300,7 @@ void PVDECL frame_received_callback_B(tPvFrame* pFrame){
         _centerY = cv_imgproc.y;
         
         isCompleteCalculation = true;
+        is_save_image = true;
         
     }
     else if (img_proc_mode == find_rectangle_mode){
@@ -309,6 +310,7 @@ void PVDECL frame_received_callback_B(tPvFrame* pFrame){
         _centerY = cv_imgproc.y;
         
         isCompleteCalculation = true;
+        is_save_image = true;
     }
     else if (img_proc_mode == find_min_max_area_mode){
         //[cv_imgproc imrotate:cv_source_img :cv_source_img :180];
@@ -334,10 +336,17 @@ void PVDECL frame_received_callback_B(tPvFrame* pFrame){
         isCompleteCalculation = true;
         delete roi;
     }
-    
+    // 2023-10-16 Matthew always save image
     if (is_save_image == true){
-        NSString* path = [[NSString alloc]initWithFormat:@"%@%d%@", @"/Users/Mesa/Desktop/", save_count++, @".png"];
+        
+        NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
+        [DateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+        NSString *dateTimeStr = [[NSString alloc]initWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
+        
+        NSString* path = [[NSString alloc]initWithFormat:@"%@%@%@", @"/Vault/MesaFixture/MesaPic/Result/", dateTimeStr, @".png"];
+        NSString* path1 = [[NSString alloc]initWithFormat:@"%@%@%@", @"/Vault/MesaFixture/MesaPic/", dateTimeStr, @".png"];
         imwrite([path UTF8String], cv_drawing_img);
+        imwrite([path1 UTF8String], cv_source_img);
         //E: Jan/30th/2015, Sylar, change the is_save_image to NO to make sure the photo saving do once per click
         is_save_image = false;
     }
@@ -352,7 +361,10 @@ void PVDECL frame_received_callback_B(tPvFrame* pFrame){
     //CGImageRef Image_CG_Ref = CGImageCreate(img_width, img_height,8, 8, img_width, CGColorSpaceCreateDeviceGray(), kCGBitmapByteOrderDefault, provider, NULL, false, kCGRenderingIntentDefault);
     @autoreleasepool {
         img = [[NSImage alloc]initWithCGImage:Image_CG_Ref size:{(CGFloat)img_width, (CGFloat)img_height}];
-        [displayView setImage:img];
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [displayView setImage:img];
+        });
     }
     
     CGDataProviderRelease(provider);

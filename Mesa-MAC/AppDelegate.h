@@ -83,7 +83,7 @@ extern bool RECORD_PROCESSING_TIME;
 @property bitData axesAlarmOn;
 @property bitData positiveLimitOn;
 @property bitData negativeLimitOn;
-
+@property (assign) bool TOP_TOUCH_Status;
 @property int cleancount;
 
 @property (assign) int pingCamCycle;
@@ -221,8 +221,8 @@ extern bool RECORD_PROCESSING_TIME;
 -(void)goToDownProbePosition_V2;
 -(void)goToHomePosition;
 -(void)goToClean;
+-(bool)StartCylinder:(int) DO_Port:(int) DI_Port :(NSString *)DO_Name;
 -(void)reconnectCamera : (tPvErr)e;
-
 - (void)commandHandler:(NSString *)command;
 
 

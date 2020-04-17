@@ -10,7 +10,7 @@
 
 @implementation EdgeFinder
 
-+ (edgeError) FindEdgePointInImage : (Mat) internalImage
++ (edgeError) FindEdgePointInImage : (cv::Mat) internalImage
                         KernelSize : (int) kernelWidth
                         KernelType : (int) kernelType
                 SearchingDirection : (int) direction
@@ -398,9 +398,9 @@
     return noError;
 }
 
-+ (void) drawAllLinesIn : (Mat)drawingImage lines: (vector<roiLine>) lines colour: (char) color{
++ (void) drawAllLinesIn : (cv::Mat)drawingImage lines: (vector<roiLine>) lines colour: (char) color{
     
-    Vec3b v;    //edge point (yellow)
+    cv::Vec3b v;    //edge point (yellow)
     
     switch (color) {
         case 'r' :
@@ -438,20 +438,20 @@
     for (int i = 0; i < lines.size(); i++){
         for (int j = 0; j <lines[i].allPoints.size(); j++){
             if (j == 0){
-                Vec3b b;
+                cv::Vec3b b;
                 b[0] = 255; b[1] = 255; b[2] = 255;
-                drawingImage.at<Vec3b>(cv::Point(lines[i].allPoints[j].x, lines[i].allPoints[j].y)) = b;
+                drawingImage.at<cv::Vec3b>(cv::Point(lines[i].allPoints[j].x, lines[i].allPoints[j].y)) = b;
             }
             else{
-                drawingImage.at<Vec3b>(cv::Point(lines[i].allPoints[j].x, lines[i].allPoints[j].y)) = v;
+                drawingImage.at<cv::Vec3b>(cv::Point(lines[i].allPoints[j].x, lines[i].allPoints[j].y)) = v;
             }
         }
     }
 }
 
-+ (void) drawEdgePointsIn : (Mat)drawingImage allEdgePoints : (vector<edgePoint>)allEdgePts colour: (char) color{
++ (void) drawEdgePointsIn : (cv::Mat)drawingImage allEdgePoints : (vector<edgePoint>)allEdgePts colour: (char) color{
     
-    Vec3b v;
+    cv::Vec3b v;
     
     switch (color) {
         case 'r' :
@@ -487,7 +487,7 @@
     }
     
     for (int i = 0; i < allEdgePts.size(); i++){
-        drawingImage.at<Vec3b>(cv::Point((int)allEdgePts[i].point.x, (int)allEdgePts[i].point.y)) = v;
+        drawingImage.at<cv::Vec3b>(cv::Point((int)allEdgePts[i].point.x, (int)allEdgePts[i].point.y)) = v;
     }
 }
 

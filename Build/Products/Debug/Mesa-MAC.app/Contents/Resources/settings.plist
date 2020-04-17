@@ -57,7 +57,7 @@
 	<key>probe2_y</key>
 	<real>146.3500061035156</real>
 	<key>software_id</key>
-	<string>1.0.0.0</string>
+	<string>1.0.3.12</string>
 	<key>tester_id</key>
 	<string>17</string>
 	<key>use_message_port</key>
