@@ -60,6 +60,8 @@ typedef enum
     ROI_OutOfImage = 4,
     ROI_DefineError = 5,
     edgePointsNotValid = 6,
+    other = 7,
+    
 }edgeError ;
 
 typedef enum {

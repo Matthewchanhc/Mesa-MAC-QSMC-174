@@ -465,7 +465,6 @@ bool allAxisDisableFin;
 {
     _cmdBuffer = [[NSString alloc] init];
     _app = app;
-    
     _getForce1Lock = [[NSLock alloc] init];
     _getForce2Lock = [[NSLock alloc] init];
     
@@ -1040,93 +1039,102 @@ bool allAxisDisableFin;
 }
 
 - (void)waitMotor:(int)axis{
+    @try {
+        
+   
     //homing
-    if (homing == 1)
-    {
-        while((![[_axesHomeStatus objectAtIndex:axis] boolValue]) && !STOPTEST)
+        if (homing == 1)
         {
-//            if (isMacbook && [self getSignal:INPUT portStatus:DI_FRONT_DOOR] && CALIBRATION == false) {
-/*            if (isMacbook && CALIBRATION == false) {
-            for(int i=1; i<=4; i++)
-                {
-                    [self stopAxis:i isOriginalStop_Z:true];
-                }
-
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    NSAlert *alert = [[NSAlert alloc] init];
-                    alert.messageText = @"Door is open when homing, please close the door and reopen this app";
-                    [alert runModal];
-                });
-                MESALog(@"Door is open when axis homing");
-                [_app closeAppWithSaveLog];
-
-            }
-            else{
-*/                @autoreleasepool {
-                    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
-                }
-//            }
-
-        }
-    }
-    
-    //moving
-    else if(homing == 2)
-    {
-        for (int i=1 ; i<MAX_RETRY_TIME ; i++) {
-            if (i > MAX_RETRY_TIME) {
-                MESALog(@"[Error]Googol_MotionIO.waitMotor: %@ axis, retry %d times but end up fail. exit now", [_axes objectAtIndex:axis], i);
-                exit(-1);
-            } else {
-                if (i > 1){
-                    MESALog(@"[Warning]Googol_MotionIO.waitMotor: %@ axis, Timeout, retry %d time", [_axes objectAtIndex:axis], i-1);
-                }
-            }
-            
-            //init timer
-            _timeOut = NO;
-            _runloopTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:TIMEOUT_TOLERANCE];
-            //MESALog(@"setup timer to %@",_runloopTimer.fireDate);
-            while([[_axesMoveStatus objectAtIndex:axis] boolValue] && !STOPTEST && !_timeOut)
+            while((![[_axesHomeStatus objectAtIndex:axis] boolValue]) && !STOPTEST)
             {
-/*                if (isMacbook && [self getSignal:INPUT portStatus:DI_FRONT_DOOR] && CALIBRATION == false) {
-
-                    //for release DUT method used
-                    if (_app.isDutReleasing){
-                        _app.isInterruptDutRelease = true;
+    //            if (isMacbook && [self getSignal:INPUT portStatus:DI_FRONT_DOOR] && CALIBRATION == false) {
+    /*            if (isMacbook && CALIBRATION == false) {
+                for(int i=1; i<=4; i++)
+                    {
+                        [self stopAxis:i isOriginalStop_Z:true];
                     }
-                    
-                    //stop all axis when door is open during axis moving
-                    //for(int i=1; i<=4; i++)
-                    //{
-                    //[self stopAxis:axis isOriginalStop_Z:false];
-                    //}
-                    
-                    // set STOPTEST to ture to break this loop;
-                    STOPTEST = true;
-//                }
+
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        NSAlert *alert = [[NSAlert alloc] init];
+                        alert.messageText = @"Door is open when homing, please close the door and reopen this app";
+                        [alert runModal];
+                    });
+                    MESALog(@"Door is open when axis homing");
+                    [_app closeAppWithSaveLog];
+
+                }
                 else{
-*/
-                @autoreleasepool {
-                        //charlie changes 0.5 to 0.05 for stop Motor in faster respond when door is open
+    */                @autoreleasepool {
                         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
                     }
-                }
-//            }
-            
-            if (_timeOut && [[_axesMoveStatus objectAtIndex:axis] boolValue]) {
-                @autoreleasepool {
-                    MESALog(@"[Warning]Googol_MotionIO.waitMotor %@ axis timeout the %d time(s)", [_axes objectAtIndex:axis], i);
-                    [self goTo:axis withPosition:[[_axesTargetPosition objectAtIndex:axis] floatValue]];
-                }
-            }
-            else
-            {
-                [self timerReset];
-                _timeoutCount = 0;
-                break;
+    //            }
+
             }
         }
+        
+        //moving
+        else if(homing == 2)
+        {
+            for (int i=1 ; i<MAX_RETRY_TIME ; i++) {
+                if (i > MAX_RETRY_TIME) {
+                    MESALog(@"[Error]Googol_MotionIO.waitMotor: %@ axis, retry %d times but end up fail. exit now", [_axes objectAtIndex:axis], i);
+                    exit(-1);
+                } else {
+                    if (i > 1){
+                        MESALog(@"[Warning]Googol_MotionIO.waitMotor: %@ axis, Timeout, retry %d time", [_axes objectAtIndex:axis], i-1);
+                    }
+                }
+                
+                //init timer
+                _timeOut = NO;
+                _runloopTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:TIMEOUT_TOLERANCE];
+                //MESALog(@"setup timer to %@",_runloopTimer.fireDate);
+                while([[_axesMoveStatus objectAtIndex:axis] boolValue] && !STOPTEST && !_timeOut)
+                {
+    /*                if (isMacbook && [self getSignal:INPUT portStatus:DI_FRONT_DOOR] && CALIBRATION == false) {
+
+                        //for release DUT method used
+                        if (_app.isDutReleasing){
+                            _app.isInterruptDutRelease = true;
+                        }
+                        
+                        //stop all axis when door is open during axis moving
+                        //for(int i=1; i<=4; i++)
+                        //{
+                        //[self stopAxis:axis isOriginalStop_Z:false];
+                        //}
+                        
+                        // set STOPTEST to ture to break this loop;
+                        STOPTEST = true;
+    //                }
+                    else{
+    */
+                    @autoreleasepool {
+                            //charlie changes 0.5 to 0.05 for stop Motor in faster respond when door is open
+                            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+                        }
+                    }
+    //            }
+                
+                if (_timeOut && [[_axesMoveStatus objectAtIndex:axis] boolValue]) {
+                    @autoreleasepool {
+                        MESALog(@"[Warning]Googol_MotionIO.waitMotor %@ axis timeout the %d time(s)", [_axes objectAtIndex:axis], i);
+                        [self goTo:axis withPosition:[[_axesTargetPosition objectAtIndex:axis] floatValue]];
+                    }
+                }
+                else
+                {
+                    [self timerReset];
+                    _timeoutCount = 0;
+                    break;
+                }
+            }
+        }
+    } @catch (NSException *exception) {
+        
+            MESALog( @"error  on waitMotor %@", exception);
+            writeToLogFile( @"error  on waitMotor %@", exception);
+    } @finally {
     }
 }
 

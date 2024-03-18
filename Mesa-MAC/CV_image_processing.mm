@@ -132,72 +132,85 @@
 
 -(Mat)find_circle_in :(Mat)source_image{
 
-    Mat output_image = Mat(source_image.rows, source_image.cols, CV_8UC3);
-    cvtColor(source_image, output_image, CV_GRAY2RGB);
-    
-    /* apply parameter from plist */
-    _circleParaDictionary = [Util ReadParamsFromPlist:@"CirclePara"];
-    
-    int innerCircleRad =    [[_circleParaDictionary objectForKey:@"Inner circle width"] intValue];
-    int outerCircleRad =    [[_circleParaDictionary objectForKey:@"Outer circle width"] intValue];
-    int deltaAng =          [[_circleParaDictionary objectForKey:@"Delta Angle"] intValue];
-    int kernelType =        [[_circleParaDictionary objectForKey:@"Kernel Type"] intValue];
-    int kernelWidth =       [[_circleParaDictionary objectForKey:@"Kernel Width"] intValue];
-    int direction =         [[_circleParaDictionary objectForKey:@"Direction"] intValue];
-    int threshold =         [[_circleParaDictionary objectForKey:@"Threshold"] intValue];
-    int edgeType =          [[_circleParaDictionary objectForKey:@"Edge type"] intValue];
-    int whichEdge =         [[_circleParaDictionary objectForKey:@"Which edge"] intValue];
+    @try {
+        
+        Mat output_image = Mat(source_image.rows, source_image.cols, CV_8UC3);
+        cvtColor(source_image, output_image, CV_GRAY2RGB);
+        
+        /* apply parameter from plist */
+        _circleParaDictionary = [Util ReadParamsFromPlist:@"CirclePara"];
+        
+        int innerCircleRad =    [[_circleParaDictionary objectForKey:@"Inner circle width"] intValue];
+        int outerCircleRad =    [[_circleParaDictionary objectForKey:@"Outer circle width"] intValue];
+        int deltaAng =          [[_circleParaDictionary objectForKey:@"Delta Angle"] intValue];
+        int kernelType =        [[_circleParaDictionary objectForKey:@"Kernel Type"] intValue];
+        int kernelWidth =       [[_circleParaDictionary objectForKey:@"Kernel Width"] intValue];
+        int direction =         [[_circleParaDictionary objectForKey:@"Direction"] intValue];
+        int threshold =         [[_circleParaDictionary objectForKey:@"Threshold"] intValue];
+        int edgeType =          [[_circleParaDictionary objectForKey:@"Edge type"] intValue];
+        int whichEdge =         [[_circleParaDictionary objectForKey:@"Which edge"] intValue];
 
-    MESALog(@"Source image height = %d", source_image.rows);
-    MESALog(@"Source image width = %d", source_image.cols);
-    MESALog(@"Inner circle radius = %d", innerCircleRad);
-    MESALog(@"Outer circle radius = %d", outerCircleRad);
-    MESALog(@"Delta angle = %d", deltaAng);
-    MESALog(@"Kernel Type = %d", kernelType);
-    MESALog(@"Kernel Width = %d", kernelWidth);
-    MESALog(@"Direction = %d", direction);
-    MESALog(@"Threshold = %d", threshold);
-    MESALog(@"Edge type = %d", edgeType);
-    MESALog(@"Which edge = %d", whichEdge);
+        MESALog(@"Source image height = %d", source_image.rows);
+        MESALog(@"Source image width = %d", source_image.cols);
+        MESALog(@"Inner circle radius = %d", innerCircleRad);
+        MESALog(@"Outer circle radius = %d", outerCircleRad);
+        MESALog(@"Delta angle = %d", deltaAng);
+        MESALog(@"Kernel Type = %d", kernelType);
+        MESALog(@"Kernel Width = %d", kernelWidth);
+        MESALog(@"Direction = %d", direction);
+        MESALog(@"Threshold = %d", threshold);
+        MESALog(@"Edge type = %d", edgeType);
+        MESALog(@"Which edge = %d", whichEdge);
 
-    edgeError err;
-    fittedCircle mesaButton;
-    edgeInfo edgeResultInfo;
-    
-    err = [cf FindCircleIn:source_image
-               ResultImage:output_image
-                   CenterX:source_image.cols/2
-                   CenterY:source_image.rows/2
-         InnerCircleRadius:innerCircleRad
-         OuterCircleRadius:outerCircleRad
-               DetltaAngle:deltaAng
-                KernelType:kernelType
-               kernelWidth:kernelWidth
-        SearchingDirection:direction
-             EdgeThreshold:threshold
-                  EdgeType:edgeType
-                 WhichEdge:whichEdge
-              CircleResult:mesaButton
-                  EdgeInfo:edgeResultInfo];
-    
-    if (err == noError){
-        _x = mesaButton.cx;
-        _y = mesaButton.cy;
-    }
-    else{
-        _x = -1;
-        _y = -1;
-    
-    }
+        edgeError err;
+        fittedCircle mesaButton;
+        edgeInfo edgeResultInfo;
+        
+        err = [cf FindCircleIn:source_image
+                   ResultImage:output_image
+                       CenterX:source_image.cols/2
+                       CenterY:source_image.rows/2
+             InnerCircleRadius:innerCircleRad
+             OuterCircleRadius:outerCircleRad
+                   DetltaAngle:deltaAng
+                    KernelType:kernelType
+                   kernelWidth:kernelWidth
+            SearchingDirection:direction
+                 EdgeThreshold:threshold
+                      EdgeType:edgeType
+                     WhichEdge:whichEdge
+                  CircleResult:mesaButton
+                      EdgeInfo:edgeResultInfo];
+        
 
-    MESALog(@"Error = %d", err);
-    MESALog(@"circle center = (%f, %f)", _x,_y);
-/*
-    if (IMAGESAVING){
-        [self saveImagelogs:source_image resultImage:output_image cx:mesaButton.cx cy:mesaButton.cy radius:mesaButton.radius];
+        if (err == noError){
+            _x = mesaButton.cx;
+            _y = mesaButton.cy;
+        }
+        else{
+            _x = -1;
+            _y = -1;
+        
+        }
+        
+
+        MESALog(@"Error = %d", err);
+        MESALog(@"circle center = (%f, %f)", _x,_y);
+    /*
+        if (IMAGESAVING){
+            [self saveImagelogs:source_image resultImage:output_image cx:mesaButton.cx cy:mesaButton.cy radius:mesaButton.radius];
+        }
+    */
+        return output_image;
+    } @catch (NSException *exception) {
+        MESALog(@"Error  on find_circle_in ");
+        MESALog(@"Error  on find_circle_in= %d", exception);
+        writeToLogFile( @"Error  on find_circle_in.");
+        writeToLogFile(@"Error  on find_circle_in= %d", exception);
+        
+         
+    } @finally {
     }
-*/
-    return output_image;
 }
 
 -(Mat)find_rectangle_in :(Mat)source_image{

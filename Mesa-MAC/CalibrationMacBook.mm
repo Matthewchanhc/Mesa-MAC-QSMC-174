@@ -985,11 +985,21 @@
 
 - (IBAction)clickYIn:(id)sender {
     
-    float offset = [_gotoOffset floatValue];
-    float targetPos = [[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue] + offset;
-    
-    [_app.motion goTo:AXIS_Y withPosition:targetPos];
-    [_app.motion waitMotor:AXIS_Y];
+    @try {
+        
+        float offset = [_gotoOffset floatValue];
+        float targetPos = [[_app.motion.axesPosition objectAtIndex:AXIS_Y] floatValue] + offset;
+        
+        [_app.motion goTo:AXIS_Y withPosition:targetPos];
+        [_app.motion waitMotor:AXIS_Y];
+        
+    } @catch (NSException *exception) {
+        MESALog( @"error  on clickclickYInYIn %@", exception);
+        writeToLogFile( @"error  on clickclickYInYIn %@", exception);
+    } @finally {
+        
+    }
+   
     //[_app.motion goTo:AXIS_Y withPosition:targetPos inMsgMode:YES];
 }
 

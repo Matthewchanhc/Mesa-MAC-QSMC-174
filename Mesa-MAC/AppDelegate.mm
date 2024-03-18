@@ -88,7 +88,9 @@ CFDataRef sgReturn;
     globalApp = self;
 
     _spiderman = [[DataCollctor alloc] initWithFolderPath:@"/vault/MesaFixture/MesaLog" andAutoSaveSize:5];
-    
+    _WriteLog = [[NSThread alloc] initWithTarget:self selector:@selector(WriteLogOnThread) object:nil];
+    _WriteLog.name = @"Workflow thread";
+    [_WriteLog start];
     _workThread = [[NSThread alloc] initWithTarget:self selector:@selector(workflow) object:nil];
     _workThread.name = @"Workflow thread";
     [_workThread start];
@@ -413,8 +415,10 @@ CFDataRef sgReturn;
                 if (_workFlag != WorkDefault) {
                     STOPTEST = FALSE;
                 }
+                //writeToLogFile( @"Start on WorkFlow: %i",_workFlag);
                 switch(_workFlag)
                 {
+                        
    #pragma mark --WorkDefault
                     case WorkDefault:               //Default
                     {
@@ -620,16 +624,42 @@ CFDataRef sgReturn;
                         break;
                     }
                 }//switch
+                //writeToLogFile( @"End on WorkFlow: %i",_workFlag);
             }
         } @catch (NSException *exception) {
-            
-            MESALog( @"Error on WorkFlow: %@", exception.name);
-            MESALog( @"Error on WorkFlow Reason: %@", exception.reason );
+            writeToLogFile( @"Error on WorkFlow.");
+            writeToLogFile( @"Error on WorkFlow: %@", exception.name);
+            writeToLogFile( @"Error on WorkFlow Reason: %@", exception.reason );
         } @finally {
             
         }
         
      }
+}
+-(void)WriteLogOnThread{
+    while (true) {
+        try
+        {
+            [_spiderman collectData];
+            [NSThread sleepForTimeInterval:0.1];
+         
+        }
+        catch (NSException *exception)
+        {
+            try
+            {
+                MESALog(@"Error on WriteLogOnThread");
+             
+            }
+            catch (NSException *exception)
+            {
+                 
+            }
+            
+        }
+    }
+    
+    
 }
 
 -(void)updateStatus
@@ -665,7 +695,7 @@ CFDataRef sgReturn;
     while (true) {
     
         @try {
-            
+            //writeToLogFile( @"Start on statusCheck");
             @autoreleasepool {
     //            for (int i=0; i<50000; i++) {
     //                i++;
@@ -681,11 +711,18 @@ CFDataRef sgReturn;
                     
                     if(_TOP_TOUCH_Status)
                     {
+                        [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
+                        [NSThread sleepForTimeInterval:0.1];
                         [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
                         [_motion setOutput:DO_TOP_VACUUM toState:IO_ON];
                         
+                        [NSThread sleepForTimeInterval:0.3];
                         
-                        _TOP_TOUCH_Status=false;
+                       if( [_motion getSignal:INPUT portStatus:DI_TOP_VACUUM_WARNING])
+                       {
+                           _TOP_TOUCH_Status=false;
+                           MESALog(@"DI_TOP_VACUUM_WARNING is false ");
+                       }
                         MESALog(@"have DUT ");
                     }
                    
@@ -698,10 +735,11 @@ CFDataRef sgReturn;
                    
                     if(!_TOP_TOUCH_Status)
                     {
-                        _TOP_TOUCH_Status=true;
+                        
                         //停真空
+                        [_motion setOutput:DO_TOP_VACUUM toState:IO_ON];
+                        [NSThread sleepForTimeInterval:0.1];
                         [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
-                    
                         // 噴氣
                         [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_ON];
                     
@@ -710,6 +748,12 @@ CFDataRef sgReturn;
                     
                         // 停噴氣
                         [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
+                        if( ![_motion getSignal:INPUT portStatus:DI_TOP_VACUUM_WARNING])
+                        {
+                            _TOP_TOUCH_Status=true;
+                            MESALog(@"DI_TOP_VACUUM_WARNING is true ");
+                        }
+                        
                         MESALog(@"without DUT ");
                        
                     }
@@ -1051,9 +1095,11 @@ CFDataRef sgReturn;
     */
                 }
             }
+            //writeToLogFile( @"End on statusCheck");
         } @catch (NSException *exception) {
-            MESALog( @"Error on statusCheck: %@", exception.name);
-             MESALog( @"Error on statusCheck Reason: %@", exception.reason );
+            writeToLogFile( @"Error on WorkFlow.");
+            writeToLogFile( @"Error on statusCheck: %@", exception.name);
+            writeToLogFile( @"Error on statusCheck Reason: %@", exception.reason );
         } @finally {
             
         }
@@ -1370,23 +1416,47 @@ CFDataRef sgReturn;
         }
           
         
+      
+        
         if(isTopVacuumOK )
         {
             MESALog(@"(v) Top vacuum OK");
           
         }else
         {
-            
+            [_motion setOutput:DO_TOP_VACUUM toState:IO_OFF];
             [self showMessage:@"[Error] Top Vacuum is not Ok" inColor:[NSColor redColor]];
             return false;
         }
         
         // (5) Turn ON bottom vacuum
         MESALog(@"(iv) Start bottom vacuum");
+        //[_motion setOutput:DO_BOTTOM_VACUUM toState:IO_OFF];
+        [NSThread sleepForTimeInterval:0.1];
         [_motion setOutput:DO_BOTTOM_ANTI_VACUUM toState:IO_OFF];
         [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_ON];
-        [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
-        [_motion setOutput:DO_TOP_VACUUM toState:IO_ON];
+        //[_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
+        //[_motion setOutput:DO_TOP_VACUUM toState:IO_ON];
+        
+        [_motion getInput:DI_BOTTOM_VACUUM_WARNING];
+        
+        [NSThread sleepForTimeInterval:0.1];
+        for (int i = 0; i < 10; i++){
+            if ([_motion getSignal:INPUT portStatus:DI_BOTTOM_VACUUM_WARNING]) {
+                 
+                break;
+            }
+            else
+            {
+                [_motion setOutput:DO_BOTTOM_VACUUM toState:IO_ON];
+                [_motion setOutput:DO_TOP_ANTI_VACUUM toState:IO_OFF];
+                [NSThread sleepForTimeInterval:0.05];
+                
+                [_motion getInput:DI_BOTTOM_VACUUM_WARNING];
+                MESALog(@"[Error]Loop, Bottom Vacuum is not OK");
+            }
+            [NSThread sleepForTimeInterval:0.05];
+        }
         
         
         // Check if the bottom vacuum is OK or not
@@ -1403,6 +1473,7 @@ CFDataRef sgReturn;
             MESALog(@"(v) Bottom vacuum OK");
         }
         else{
+           
             MESALog(@"[Error]AppDelegate.SafetyCheck, Bottom Vacuum is not OK");
             [self showMessage:@"[Error] Bottom Vacuum is not OK" inColor:[NSColor redColor]];
             return false;
@@ -2664,6 +2735,8 @@ CFDataRef sgReturn;
 }
 
 - (void) pingCamera{
+    /*
+    writeToLogFile( @"Start on pingCamera");
     @try {
         
         tPvUint32 exp;
@@ -2679,15 +2752,18 @@ CFDataRef sgReturn;
             [self reconnectCamera:e];
         }
     } @catch (NSException *exception) {
-        MESALog( @"Error on pingCamera: %@", exception.name);
-        MESALog( @"Error on pingCamera Reason: %@", exception.reason );
+        writeToLogFile( @"Error on pingCamera: %@", exception.name);
+        writeToLogFile( @"Error on pingCamera Reason: %@", exception.reason );
     } @finally {
         
     }
-
+    writeToLogFile( @"End on pingCamera");
+     */
 }
 
 - (void) pingMotion{
+    /*
+    writeToLogFile( @"Start on pingMotion");
     @try {
         bool isGoogolAlive = [_motion pingGoogol];
         
@@ -2713,12 +2789,13 @@ CFDataRef sgReturn;
         
         _prevIsGoogolAlive = isGoogolAlive;
     } @catch (NSException *exception) {
-        MESALog( @"Error on pingMotion: %@", exception.name);
-        MESALog( @"Error on pingMotion Reason: %@", exception.reason );
+        writeToLogFile( @"Error on pingMotion: %@", exception.name);
+        writeToLogFile( @"Error on pingMotion Reason: %@", exception.reason );
     } @finally {
         
     }
-    
+    writeToLogFile( @"End on pingMotion");
+    */
 }
 
 #pragma mark - MESA serial delegate methods implementation

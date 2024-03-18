@@ -62,6 +62,7 @@ extern bool RECORD_PROCESSING_TIME;
 @property (strong) NSTimer *statusTimer;
 
 @property WorkFlag workFlag;
+@property NSThread *WriteLog;
 @property NSLock *lock;
 
 @property bool isReadyForTest;
@@ -224,6 +225,7 @@ extern bool RECORD_PROCESSING_TIME;
 -(bool)StartCylinder:(int) DO_Port:(int) DI_Port :(NSString *)DO_Name;
 -(void)reconnectCamera : (tPvErr)e;
 - (void)commandHandler:(NSString *)command;
+-(void)WriteLogOnThread;
 
 
 @property (strong) NSLock* pidLock;

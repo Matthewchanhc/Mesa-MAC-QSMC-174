@@ -27,120 +27,128 @@
               CircleResult : (fittedCircle&)circle
                   EdgeInfo : (edgeInfo&)edgeResultInfo{
     
-
-    vector<roiLine> allLines;
-    vector<edgePoint> allEdgePoints;
     edgeError err = noError;
-    vector<double> allSNR;
-    
-    if (cx < 0 || cx > inputImage.cols || cy < 0 || cy > inputImage.rows) {
-        return ROI_OutOfImage;
-    }
-    
-    if (innerRadius >= outerRadius) {
-        return ROI_DefineError;
-    }
+    @try {
+        vector<roiLine> allLines;
+        vector<edgePoint> allEdgePoints;
+        vector<double> allSNR;
+        
+        if (cx < 0 || cx > inputImage.cols || cy < 0 || cy > inputImage.rows) {
+            return ROI_OutOfImage;
+        }
+        
+        if (innerRadius >= outerRadius) {
+            return ROI_DefineError;
+        }
 
-    // define inner and outer circle as ROI
-    err = [self DefineInnerOuterCircleIn:inputImage
-                                 CenterX:cx
-                                 CenterY:cy
-                       InnerCircleRadius:innerRadius
-                       OuterCircleRadius:outerRadius
-                              DeltaAngle:deltaAngle
-                             LinesResult:allLines];
-    
-    if (err != noError) {
-        return err;
-    }
+        // define inner and outer circle as ROI
+        err = [self DefineInnerOuterCircleIn:inputImage
+                                     CenterX:cx
+                                     CenterY:cy
+                           InnerCircleRadius:innerRadius
+                           OuterCircleRadius:outerRadius
+                                  DeltaAngle:deltaAngle
+                                 LinesResult:allLines];
+        
+        if (err != noError) {
+            return err;
+        }
 
-    // draw inner and outer circle
-    [self drawCircleIn:drawingImage Cx:cx Cy:cy radius:innerRadius colour:'r'];
-    [self drawCircleIn:drawingImage Cx:cx Cy:cy radius:outerRadius colour:'r'];
-    
-    // draw lines between inner and outer circle
-    [EdgeFinder drawAllLinesIn:drawingImage
-                         lines:allLines
-                        colour:'b'];
-    
-    // find edge points by EdgeFinder class
-    err = [EdgeFinder FindEdgePointInImage : inputImage
-                                KernelSize : kernelWidth
-                                KernelType : kernelType
-                        SearchingDirection : direction
-                             EdgeThreshold : edgeThreshold
-                                  EdgeType : edgeType
-                                 WhichEdge : whichEdge
-                                  AllLines : allLines
-                          EdgePointsResult : allEdgePoints
-                                    allSNR : allSNR];
-    
-    //cal info for Yinan
-    [EdgeFinder calcInfo:allEdgePoints allSNR:allSNR edgeInfo:edgeResultInfo];
+        // draw inner and outer circle
+        [self drawCircleIn:drawingImage Cx:cx Cy:cy radius:innerRadius colour:'r'];
+        [self drawCircleIn:drawingImage Cx:cx Cy:cy radius:outerRadius colour:'r'];
+        
+        // draw lines between inner and outer circle
+        [EdgeFinder drawAllLinesIn:drawingImage
+                             lines:allLines
+                            colour:'b'];
+        
+        // find edge points by EdgeFinder class
+        err = [EdgeFinder FindEdgePointInImage : inputImage
+                                    KernelSize : kernelWidth
+                                    KernelType : kernelType
+                            SearchingDirection : direction
+                                 EdgeThreshold : edgeThreshold
+                                      EdgeType : edgeType
+                                     WhichEdge : whichEdge
+                                      AllLines : allLines
+                              EdgePointsResult : allEdgePoints
+                                        allSNR : allSNR];
+        
+        //cal info for Yinan
+        [EdgeFinder calcInfo:allEdgePoints allSNR:allSNR edgeInfo:edgeResultInfo];
 
-    if (err != noError) {
-        return err;
-    }
-    
-    // fit circle with RANSAC
-    err = [self fitCircleByRansacFilterWithTolerance:3
-                                              Circle:circle
-                                       AllEdgePoints:allEdgePoints
-                                     OutValidEdgePts:edgeResultInfo.ransacValidEdgePts];
-    
-    //err = [self fitCircleByRadiusFilterWithTolerance:10 Circle:circle EdgePointsIn:allEdgePoints];
-    
-    if (err != noError) {
+        if (err != noError) {
+            return err;
+        }
+        
+        // fit circle with RANSAC
+        err = [self fitCircleByRansacFilterWithTolerance:3
+                                                  Circle:circle
+                                           AllEdgePoints:allEdgePoints
+                                         OutValidEdgePts:edgeResultInfo.ransacValidEdgePts];
+        
+        //err = [self fitCircleByRadiusFilterWithTolerance:10 Circle:circle EdgePointsIn:allEdgePoints];
+        
+        if (err != noError) {
+            [EdgeFinder drawEdgePointsIn:drawingImage allEdgePoints:allEdgePoints colour:'y'];
+            return edgePtNotEnough;
+        }
+        
+        // check circle is valid or not;
+        if (circle.radius >= outerRadius || circle.radius <= innerRadius) {
+            [EdgeFinder drawEdgePointsIn:drawingImage allEdgePoints:allEdgePoints colour:'y'];
+            return edgePointsNotValid;
+        }
+        
+        // draw fitted circle
+        [self drawCircleIn:drawingImage Cx:circle.cx Cy:circle.cy radius:circle.radius colour:'g'];
+        
+        // draw fitted circle's center point with 'X'
+        int xOffset = int(round(50 * sin(45)));
+        int yOffset = int(round(50 * cos(45)));
+        cv::line(drawingImage, cv::Point(circle.cx-xOffset, circle.cy+yOffset), cv::Point(circle.cx+xOffset, circle.cy-yOffset), Scalar(0,255,0),5);
+        cv::line(drawingImage, cv::Point(circle.cx-xOffset, circle.cy-yOffset), cv::Point(circle.cx+xOffset, circle.cy+yOffset), Scalar(0,255,0),5);
+
+        
+        // draw edge point
         [EdgeFinder drawEdgePointsIn:drawingImage allEdgePoints:allEdgePoints colour:'y'];
-        return edgePtNotEnough;
+        
+        
+        // Write edge info on result image
+        NSString *edgeMeanString = [NSString stringWithFormat:@"Edge Mean = %f", edgeResultInfo.edgeMean];
+        NSString *edgemeanSdString = [NSString stringWithFormat:@"Edge mean Sd = %f", edgeResultInfo.edgeMeanSD];
+        
+        NSString *edgeMedianString = [NSString stringWithFormat:@"Edge Abs Mean = %f", edgeResultInfo.edgeAbsMean];
+        NSString *edgeMedianSDString = [NSString stringWithFormat:@"Edge Abs Mean SD = %f", edgeResultInfo.edgeAbsMeanSD];
+        
+        NSString *edgeDark2BrightString = [NSString stringWithFormat:@"Dark to Bright = %.2f%%", edgeResultInfo.brightPrecentage];
+        NSString *edgeBright2DarkString = [NSString stringWithFormat:@"Bright to Dark = %.2f%%", edgeResultInfo.darkPrecentage];
+        
+        NSString *snrAvgString = [NSString stringWithFormat:@"SNR avg = %f", edgeResultInfo.SNR_Avg];
+        NSString *snrMinString = [NSString stringWithFormat:@"SNR min = %f", edgeResultInfo.SNR_Min];
+
+        putText(drawingImage, [edgeMeanString UTF8String],          CvPoint{100,100}, 1, 2, *new Scalar(128,225,0), 2);
+        putText(drawingImage, [edgemeanSdString UTF8String],        CvPoint{100,130}, 1, 2, *new Scalar(128,225,0), 2);
+        
+        putText(drawingImage, [edgeMedianString UTF8String],        CvPoint{100,160}, 1, 2, *new Scalar(128,225,0), 2);
+        putText(drawingImage, [edgeMedianSDString UTF8String],      CvPoint{100,190}, 1, 2, *new Scalar(128,225,0), 2);
+
+        putText(drawingImage, [edgeDark2BrightString UTF8String],   CvPoint{100,220}, 1, 2, *new Scalar(128,225,0), 2);
+        putText(drawingImage, [edgeBright2DarkString UTF8String],   CvPoint{100,250}, 1, 2, *new Scalar(128,225,0), 2);
+        
+        putText(drawingImage, [snrAvgString UTF8String],            CvPoint{100,280}, 1, 2, *new Scalar(128,225,0), 2);
+        putText(drawingImage, [snrMinString UTF8String],            CvPoint{100,310}, 1, 2, *new Scalar(128,225,0), 2);
+
+        return err;
+    } @catch (NSException *exception) {
+        err =other;
+    } @finally {
+        
     }
     
-    // check circle is valid or not;
-    if (circle.radius >= outerRadius || circle.radius <= innerRadius) {
-        [EdgeFinder drawEdgePointsIn:drawingImage allEdgePoints:allEdgePoints colour:'y'];
-        return edgePointsNotValid;
-    }
+        return err;
     
-    // draw fitted circle
-    [self drawCircleIn:drawingImage Cx:circle.cx Cy:circle.cy radius:circle.radius colour:'g'];
-    
-    // draw fitted circle's center point with 'X'
-    int xOffset = int(round(50 * sin(45)));
-    int yOffset = int(round(50 * cos(45)));
-    cv::line(drawingImage, cv::Point(circle.cx-xOffset, circle.cy+yOffset), cv::Point(circle.cx+xOffset, circle.cy-yOffset), Scalar(0,255,0),5);
-    cv::line(drawingImage, cv::Point(circle.cx-xOffset, circle.cy-yOffset), cv::Point(circle.cx+xOffset, circle.cy+yOffset), Scalar(0,255,0),5);
-
-    
-    // draw edge point
-    [EdgeFinder drawEdgePointsIn:drawingImage allEdgePoints:allEdgePoints colour:'y'];
-    
-    
-    // Write edge info on result image
-    NSString *edgeMeanString = [NSString stringWithFormat:@"Edge Mean = %f", edgeResultInfo.edgeMean];
-    NSString *edgemeanSdString = [NSString stringWithFormat:@"Edge mean Sd = %f", edgeResultInfo.edgeMeanSD];
-    
-    NSString *edgeMedianString = [NSString stringWithFormat:@"Edge Abs Mean = %f", edgeResultInfo.edgeAbsMean];
-    NSString *edgeMedianSDString = [NSString stringWithFormat:@"Edge Abs Mean SD = %f", edgeResultInfo.edgeAbsMeanSD];
-    
-    NSString *edgeDark2BrightString = [NSString stringWithFormat:@"Dark to Bright = %.2f%%", edgeResultInfo.brightPrecentage];
-    NSString *edgeBright2DarkString = [NSString stringWithFormat:@"Bright to Dark = %.2f%%", edgeResultInfo.darkPrecentage];
-    
-    NSString *snrAvgString = [NSString stringWithFormat:@"SNR avg = %f", edgeResultInfo.SNR_Avg];
-    NSString *snrMinString = [NSString stringWithFormat:@"SNR min = %f", edgeResultInfo.SNR_Min];
-
-    putText(drawingImage, [edgeMeanString UTF8String],          CvPoint{100,100}, 1, 2, *new Scalar(128,225,0), 2);
-    putText(drawingImage, [edgemeanSdString UTF8String],        CvPoint{100,130}, 1, 2, *new Scalar(128,225,0), 2);
-    
-    putText(drawingImage, [edgeMedianString UTF8String],        CvPoint{100,160}, 1, 2, *new Scalar(128,225,0), 2);
-    putText(drawingImage, [edgeMedianSDString UTF8String],      CvPoint{100,190}, 1, 2, *new Scalar(128,225,0), 2);
-
-    putText(drawingImage, [edgeDark2BrightString UTF8String],   CvPoint{100,220}, 1, 2, *new Scalar(128,225,0), 2);
-    putText(drawingImage, [edgeBright2DarkString UTF8String],   CvPoint{100,250}, 1, 2, *new Scalar(128,225,0), 2);
-    
-    putText(drawingImage, [snrAvgString UTF8String],            CvPoint{100,280}, 1, 2, *new Scalar(128,225,0), 2);
-    putText(drawingImage, [snrMinString UTF8String],            CvPoint{100,310}, 1, 2, *new Scalar(128,225,0), 2);
-
-    return err;
 }
 
 
@@ -465,8 +473,18 @@
             circleColor = Scalar(0,0,255);
             break;
     }
+    @try {
+        if(cx>0 && cy>0  && radius>0)
+        {
+            
+            cv::circle(drawingImage, cv::Point(cx, cy),radius, circleColor, 1,8,0);
+        }
+    } @catch (NSException *exception) {
+        
+    } @finally {
+         
+    }
     
-    cv::circle(drawingImage, cv::Point(cx, cy),radius, circleColor, 1,8,0);
 }
 
 - (double)abs : (double) x{

@@ -155,132 +155,143 @@ void PVDECL frame_received_callback_B(tPvFrame* pFrame){
 
 - (tPvErr)capture_image_in_mode :(unsigned)capture_mode num_of_frames : (unsigned long)num_of_frames ns_img_view : (NSImageView*)img_view image_process_mode:(int)image_processing_mode{
     
-    img_proc_mode = image_processing_mode;
     
-    MESALog(@"\n\n\n");
-    loop_count = 0;
-    //[self stop_capture];
-    
-    which_capture_mode = capture_mode;
-    target_frame_count = num_of_frames;
-    
-    displayView = img_view;
-    ik_disp_view.autoresizes = YES;
-    [ik_disp_view setDoubleClickOpensImageEditPanel: NO];
-    [ik_disp_view setCurrentToolMode : IKToolModeSelect];
-    
-    _is_capturing = true;
-    
-    err = PvCaptureEnd(cam);
-    err = PvCommandRun(cam, "AcquisitionAbort");
-    
-    err = PvCaptureQueueClear(cam);
-    if(err != ePvErrSuccess) MESALog(@"fail to clear queue, err code = %d", err);
-    
-    if (num_of_frames == camera_free_run_capture) {                                               //set to continuous capture
-        err = PvAttrEnumSet(cam, "AcquisitionMode", "Continuous");
-        if(err != ePvErrSuccess) return err;
+    @try {
+        img_proc_mode = image_processing_mode;
         
-        err = PvAttrUint32Set(cam, "AcquisitionFrameCount", 1);
-        if(err != ePvErrSuccess) return err;
+        MESALog(@"\n\n\n");
+        loop_count = 0;
+        //[self stop_capture];
         
-        //E: Feb/6th/2015, Sylar, try to change the FrameStartTriggerMode to fix frame mode for source saving, set the frame rate to 10 for now, which matches the time interval delate(0.1s) in the calibration's updateUI thread
-        err = PvAttrEnumSet(cam, "FrameStartTriggerMode", "FixedRate");
-        if(err != ePvErrSuccess){
-            MESALog(@" err of set cam to fixed rate mode, code = %d", err);
-            return err;
-        }
-        else{
-            MESALog(@"[camera] set to fixed rate mode");
-        }
+        which_capture_mode = capture_mode;
+        target_frame_count = num_of_frames;
         
-        err = PvAttrFloat32Set(cam, "FrameRate", 7);
-        if(err != ePvErrSuccess){
-            MESALog(@" err of set cam to 7 frame rate, code = %d", err);
-            return err;
-        }
-        else{
-            MESALog(@"[camera] set frame rate to 7");
+        displayView = img_view;
+        ik_disp_view.autoresizes = YES;
+        [ik_disp_view setDoubleClickOpensImageEditPanel: NO];
+        [ik_disp_view setCurrentToolMode : IKToolModeSelect];
+        
+        _is_capturing = true;
+        
+        err = PvCaptureEnd(cam);
+        err = PvCommandRun(cam, "AcquisitionAbort");
+        
+        err = PvCaptureQueueClear(cam);
+        if(err != ePvErrSuccess) MESALog(@"fail to clear queue, err code = %d", err);
+        
+        if (num_of_frames == camera_free_run_capture) {                                               //set to continuous capture
+            err = PvAttrEnumSet(cam, "AcquisitionMode", "Continuous");
+            if(err != ePvErrSuccess) return err;
+            
+            err = PvAttrUint32Set(cam, "AcquisitionFrameCount", 1);
+            if(err != ePvErrSuccess) return err;
+            
+            //E: Feb/6th/2015, Sylar, try to change the FrameStartTriggerMode to fix frame mode for source saving, set the frame rate to 10 for now, which matches the time interval delate(0.1s) in the calibration's updateUI thread
+            err = PvAttrEnumSet(cam, "FrameStartTriggerMode", "FixedRate");
+            if(err != ePvErrSuccess){
+                MESALog(@" err of set cam to fixed rate mode, code = %d", err);
+                return err;
+            }
+            else{
+                MESALog(@"[camera] set to fixed rate mode");
+            }
+            
+            err = PvAttrFloat32Set(cam, "FrameRate", 7);
+            if(err != ePvErrSuccess){
+                MESALog(@" err of set cam to 7 frame rate, code = %d", err);
+                return err;
+            }
+            else{
+                MESALog(@"[camera] set frame rate to 7");
 
+            }
+            
         }
         
-    }
-    
-    else if(num_of_frames == camera_single_frame_capture) {                                           //set to single frame capture
-        err = PvAttrEnumSet(cam, "AcquisitionMode", "SingleFrame");
-        if(err != ePvErrSuccess) return err;
+        else if(num_of_frames == camera_single_frame_capture) {                                           //set to single frame capture
+            err = PvAttrEnumSet(cam, "AcquisitionMode", "SingleFrame");
+            if(err != ePvErrSuccess) return err;
+            
+            err = PvAttrUint32Set(cam, "AcquisitionFrameCount", 1);
+            if(err != ePvErrSuccess) return err;
+            MESALog(@"setting fin in single mode");
+        }
+        else if (num_of_frames > 1){                                                            //set to multi-frame
+            err = PvAttrEnumSet(cam, "AcquisitionMode", "MultiFrame");
+            if(err != ePvErrSuccess) return err;
+            
+            err = PvAttrUint32Set(cam, "AcquisitionFrameCount", num_of_frames);
+            if(err != ePvErrSuccess) return err;
+        }
         
-        err = PvAttrUint32Set(cam, "AcquisitionFrameCount", 1);
-        if(err != ePvErrSuccess) return err;
-        MESALog(@"setting fin in single mode");
-    }
-    else if (num_of_frames > 1){                                                            //set to multi-frame
-        err = PvAttrEnumSet(cam, "AcquisitionMode", "MultiFrame");
-        if(err != ePvErrSuccess) return err;
+        char mode[12];
+        unsigned long char_length_of_mode = 0;
+        [self getEnum : "AcquisitionMode" : mode :12 :&char_length_of_mode];
+        MESALog(@"AcquisitionMode set to '%s' mode", mode);
         
-        err = PvAttrUint32Set(cam, "AcquisitionFrameCount", num_of_frames);
-        if(err != ePvErrSuccess) return err;
-    }
-    
-    char mode[12];
-    unsigned long char_length_of_mode = 0;
-    [self getEnum : "AcquisitionMode" : mode :12 :&char_length_of_mode];
-    MESALog(@"AcquisitionMode set to '%s' mode", mode);
-    
-    
-    
-    if (capture_mode == camera_software_trigger) {                     //set to software trigger
-        err = PvAttrEnumSet(cam, "AcqStartTriggerMode", "Disabled");
-        if(err != ePvErrSuccess) return err;
-        else MESALog(@"Set Acquisition mode to software trigger.");
         
-        err = PvCaptureStart(cam);
-        if(err != ePvErrSuccess) return err;
-        else MESALog(@"Capture Start!!");
         
-        err = PvCommandRun(cam, "AcquisitionStart");
-        if(err != ePvErrSuccess) return err;
-        else MESALog(@"Acquisition start");
-    }
-    else if(capture_mode == camera_hardware_trigger){                  //set to hardware trigger
-        err = PvAttrEnumSet(cam, "AcqStartTriggerMode", "SyncIn2");
-        if(err != ePvErrSuccess) return err;
-        else MESALog(@"Set Acquisition mode to hardware trigger.");
+        if (capture_mode == camera_software_trigger) {                     //set to software trigger
+            err = PvAttrEnumSet(cam, "AcqStartTriggerMode", "Disabled");
+            if(err != ePvErrSuccess) return err;
+            else MESALog(@"Set Acquisition mode to software trigger.");
+            
+            err = PvCaptureStart(cam);
+            if(err != ePvErrSuccess) return err;
+            else MESALog(@"Capture Start!!");
+            
+            err = PvCommandRun(cam, "AcquisitionStart");
+            if(err != ePvErrSuccess) return err;
+            else MESALog(@"Acquisition start");
+        }
+        else if(capture_mode == camera_hardware_trigger){                  //set to hardware trigger
+            err = PvAttrEnumSet(cam, "AcqStartTriggerMode", "SyncIn2");
+            if(err != ePvErrSuccess) return err;
+            else MESALog(@"Set Acquisition mode to hardware trigger.");
+            
+            // Set the trigger event to EdgeRising
+            MESALog(@"Set trigger event to EdgeRising.");
+            err = PvAttrEnumSet(cam, "AcqStartTriggerEvent", "EdgeFalling");
+            if(err != ePvErrSuccess) return err;
+            else MESALog(@"Set Acquisition event to falling edge");
+            
+            err = PvCaptureStart(cam);
+            if(err != ePvErrSuccess) return err;
+            else MESALog(@"Capture Start!!");
+            
+            MESALog(@"Waiting for electronic signal.....");
+        }
         
-        // Set the trigger event to EdgeRising
-        MESALog(@"Set trigger event to EdgeRising.");
-        err = PvAttrEnumSet(cam, "AcqStartTriggerEvent", "EdgeFalling");
-        if(err != ePvErrSuccess) return err;
-        else MESALog(@"Set Acquisition event to falling edge");
+        multi_source_frames.clear();
         
-        err = PvCaptureStart(cam);
-        if(err != ePvErrSuccess) return err;
-        else MESALog(@"Capture Start!!");
-        
-        MESALog(@"Waiting for electronic signal.....");
-    }
-    
-    multi_source_frames.clear();
-    
-    err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_A);
-    /*
-    if (strcmp(camera_name.UTF8String, CAM_A_NAME)){
         err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_A);
-    }
-    else if (strcmp(camera_name.UTF8String, CAM_B_NAME)){
-        err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_B);
-    }
-    */
-    
-    if (image_processing_mode == find_circle_mode || image_processing_mode == find_rectangle_mode || image_processing_mode == calculate_roi_intensity_average){
-
-        isCompleteCalculation = false;
-        
-        while (isCompleteCalculation == false) {
-            [NSThread sleepForTimeInterval:0.005];
+        /*
+        if (strcmp(camera_name.UTF8String, CAM_A_NAME)){
+            err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_A);
         }
+        else if (strcmp(camera_name.UTF8String, CAM_B_NAME)){
+            err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_B);
+        }
+        */
+        
+        if (image_processing_mode == find_circle_mode || image_processing_mode == find_rectangle_mode || image_processing_mode == calculate_roi_intensity_average){
+
+            isCompleteCalculation = false;
+            
+            while (isCompleteCalculation == false) {
+                [NSThread sleepForTimeInterval:0.005];
+            }
+        }
+        
+        
+    } @catch (NSException *exception) {
+        writeToLogFile( @"Error on capture_image_in_mode" );
+        writeToLogFile( @"Error on capture_image_in_mode: %@", exception.name);
+        writeToLogFile( @"Error on capture_image_in_mode Reason: %@", exception.reason );
+        
+    } @finally {
+        
     }
-    
     
     
     return ePvErrSuccess;
@@ -377,115 +388,130 @@ void PVDECL frame_received_callback_B(tPvFrame* pFrame){
 
 - (void) frame_received : (tPvFrame)in_frame{
     
-    if (in_frame.Status != 0) {
-        MESALog(@"error code is : %@", [self err_code_to_txt_msg:in_frame.Status]);
-    }
-    else {
-        MESALog(@"frame count = %lu, loop count = %lu, lost frame = %lu", in_frame.FrameCount, ++loop_count, in_frame.FrameCount - loop_count);
-    }
     
-    
-    /* determine the next step base on current capture mode :
-     
-     * Software trigger : freerun           keep capturing
-                          single frame      end capture
-                          multi-frame       if receive all frames -> end capture, else -> keep capturing
-     
-     * Hareware trigger : freerun           keep capturing
-                          single frame      reset the "frame->FrameCount", then keep capturing
-                          multi-frame       if receive all frames -> reset the "frame->FrameCount", then keep capturing
-                                                             else -> keep capturing
-     
-     *** The reason why software trigger no need to reset FrameCount is it will be reseted automatically in the next SW trigger signal
-    */
-    NSString *state;
-    bool is_display_now = false;
-    
-    switch (which_capture_mode) {
-        case camera_software_trigger:
-            if (target_frame_count == camera_free_run_capture){
-                state = @"keep capturing";
-                is_display_now = true;
-            }
-            else if (target_frame_count == camera_single_frame_capture){
-                state = @"end capture";
-                is_display_now = true;
-            }
-            else if (target_frame_count > 1){
-                multi_source_frames.push_back(in_frame);
-                if (in_frame.FrameCount == target_frame_count){
-                    in_frame = [cv_imgproc multi_frames_denoise:multi_source_frames];
-                    multi_source_frames.clear();
+    @try {
+        
+        if (in_frame.Status != 0) {
+            MESALog(@"error code is : %@", [self err_code_to_txt_msg:in_frame.Status]);
+        }
+        else {
+            MESALog(@"frame count = %lu, loop count = %lu, lost frame = %lu", in_frame.FrameCount, ++loop_count, in_frame.FrameCount - loop_count);
+        }
+        
+        
+        /* determine the next step base on current capture mode :
+         
+         * Software trigger : freerun           keep capturing
+                              single frame      end capture
+                              multi-frame       if receive all frames -> end capture, else -> keep capturing
+         
+         * Hareware trigger : freerun           keep capturing
+                              single frame      reset the "frame->FrameCount", then keep capturing
+                              multi-frame       if receive all frames -> reset the "frame->FrameCount", then keep capturing
+                                                                 else -> keep capturing
+         
+         *** The reason why software trigger no need to reset FrameCount is it will be reseted automatically in the next SW trigger signal
+        */
+        NSString *state;
+        bool is_display_now = false;
+        
+        switch (which_capture_mode) {
+            case camera_software_trigger:
+                if (target_frame_count == camera_free_run_capture){
+                    state = @"keep capturing";
+                    is_display_now = true;
+                }
+                else if (target_frame_count == camera_single_frame_capture){
                     state = @"end capture";
                     is_display_now = true;
                 }
-                else{
-                    state = @"keep capturing";
-                    is_display_now = false;
+                else if (target_frame_count > 1){
+                    multi_source_frames.push_back(in_frame);
+                    if (in_frame.FrameCount == target_frame_count){
+                        in_frame = [cv_imgproc multi_frames_denoise:multi_source_frames];
+                        multi_source_frames.clear();
+                        state = @"end capture";
+                        is_display_now = true;
+                    }
+                    else{
+                        state = @"keep capturing";
+                        is_display_now = false;
+                    }
                 }
-            }
-            break;
-            
-        case camera_hardware_trigger:
-            if (target_frame_count == camera_free_run_capture){
-                state = @"keep capturing";
-                is_display_now = true;
-            }
-            else if (target_frame_count == camera_single_frame_capture){
-                state = @"reset framecount";
-                is_display_now = true;
-            }
-            else if (target_frame_count > 1){
-                multi_source_frames.push_back(in_frame);
-                if (in_frame.FrameCount == target_frame_count){
-                    in_frame = [cv_imgproc multi_frames_denoise:multi_source_frames];
-                    multi_source_frames.clear();
-                    state = @"reset framecount";            //reset frame.FrameCount which is read from camera
+                break;
+                
+            case camera_hardware_trigger:
+                if (target_frame_count == camera_free_run_capture){
+                    state = @"keep capturing";
                     is_display_now = true;
                 }
-                else{
-                    state = @"keep capturing";
-                    is_display_now = false;
+                else if (target_frame_count == camera_single_frame_capture){
+                    state = @"reset framecount";
+                    is_display_now = true;
                 }
-            }
-            break;
-    }
-    
-    
-    //reset frame->FrameCount that read from camera, only do it in HW trigger
-    if ([state isEqualToString:@"reset framecount"]) {
-        PvCaptureEnd(cam);
-        err = PvCaptureStart(cam);
-        loop_count = 0;
-        state = @"keep capturing";
-    }
-    
-    
-    if ([state isEqualToString:@"keep capturing"]) {
-        err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_A);
-        s_frame_count++;
-        if (s_frame_count < 10) {
-            s_frame_count = 0;
+                else if (target_frame_count > 1){
+                    multi_source_frames.push_back(in_frame);
+                    if (in_frame.FrameCount == target_frame_count){
+                        in_frame = [cv_imgproc multi_frames_denoise:multi_source_frames];
+                        multi_source_frames.clear();
+                        state = @"reset framecount";            //reset frame.FrameCount which is read from camera
+                        is_display_now = true;
+                    }
+                    else{
+                        state = @"keep capturing";
+                        is_display_now = false;
+                    }
+                }
+                break;
         }
         
-        /*
-        if (strcmp(camera_name.UTF8String, CAM_A_NAME)){
+        
+        //reset frame->FrameCount that read from camera, only do it in HW trigger
+        if ([state isEqualToString:@"reset framecount"]) {
+            PvCaptureEnd(cam);
+            err = PvCaptureStart(cam);
+            loop_count = 0;
+            state = @"keep capturing";
+        }
+        
+        
+        if ([state isEqualToString:@"keep capturing"]) {
             err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_A);
-            s_frame_count = !s_frame_count;
+            s_frame_count++;
+            if (s_frame_count < 10) {
+                s_frame_count = 0;
+            }
+            
+            /*
+            if (strcmp(camera_name.UTF8String, CAM_A_NAME)){
+                err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_A);
+                s_frame_count = !s_frame_count;
+            }
+            else if (strcmp(camera_name.UTF8String, CAM_B_NAME)) {
+                err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_B);
+                s_frame_count = !s_frame_count;
+            }
+             */
         }
-        else if (strcmp(camera_name.UTF8String, CAM_B_NAME)) {
-            err = PvCaptureQueueFrame(cam, &s_frames[s_frame_count], frame_received_callback_B);
-            s_frame_count = !s_frame_count;
+        else if ([state isEqualToString:@"end capture"]){
+            PvCaptureEnd(cam);
         }
-         */
-    }
-    else if ([state isEqualToString:@"end capture"]){
-        PvCaptureEnd(cam);
+        
+        if (is_display_now == true){
+            [self display_image_to_GUI : in_frame];
+        }
+        
+        
+    } @catch (NSException *exception) {
+        writeToLogFile( @"Error on frame_received" );
+        writeToLogFile( @"Error on frame_received: %@", exception.name);
+        writeToLogFile( @"Error on frame_received Reason: %@", exception.reason );
+        
+    } @finally {
+        
     }
     
-    if (is_display_now == true){
-        [self display_image_to_GUI : in_frame];
-    }
+  
 
 }
 

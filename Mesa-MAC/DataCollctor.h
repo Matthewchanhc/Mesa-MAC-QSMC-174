@@ -52,7 +52,7 @@
 -(void)collectData;
 
 -(BOOL)changeAutoSaveSize:(int)size;
-
+-(void) writeToLogFile2:(NSString *) Log;
 /**
  *  This method will save a default DataCollector for log to call. This is implemented to make the MESALog with the same format as NSLog had.
  */
@@ -70,6 +70,8 @@
  */
 FOUNDATION_EXPORT bool MESALog(NSString *format, ...)NS_FORMAT_FUNCTION(1,2);
 
+FOUNDATION_EXPORT void writeToLogFile(NSString *Log, ...)NS_FORMAT_FUNCTION(1,2);
+//FOUNDATION_EXPORT void writeToLogFile2(NSString *Log, ...)NS_FORMAT_FUNCTION(1,2);
 /**
  *  This method will let the given DataCollector collect the given format input string and log it into system.log at the same time
  *

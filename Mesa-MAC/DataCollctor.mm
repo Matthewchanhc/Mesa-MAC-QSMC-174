@@ -97,9 +97,11 @@ DataCollctor *defaultSpider;
     [_myLock unlock];
 }
 
+
+
 -(void)collectData{
     NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
-    [DateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+    [DateFormatter setDateFormat:@"yyyyMMddHH"];
     NSString *dateTimeStr = [[NSString alloc]initWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
     
     NSString *tmpPath;
@@ -111,14 +113,91 @@ DataCollctor *defaultSpider;
         tmpPath = _recordPath;
     }
     
-    if ([_dataContent writeToFile:tmpPath atomically:YES]) {
-        NSLog(@"Record down success");
+   
+
+    // 创建文件管理器
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    if (![fileManager fileExistsAtPath:tmpPath]) {
+        // 如果文件不存在，则创建新文件并写入内容
+        [fileManager createFileAtPath:tmpPath contents:nil attributes:nil];
     }
-    else{
-        NSLog(@"Fail to save record, please recheck the directory, directory:%@",_folderMode?_recordFolder:_recordPath);
+
+    // 打开文件以进行追加写入
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:tmpPath];
+    [fileHandle seekToEndOfFile];
+
+    // 将内容转换为NSData类型，并写入文件
+    long datalen =_dataContent.length;
+    if(datalen==0)
+    {
+        [fileHandle closeFile];
+        return;
     }
-    _dataContent = nil;
-    _dataContent = [[NSMutableData alloc] init];
+    NSData *subData =[_dataContent subdataWithRange:NSMakeRange(0, datalen)];
+     
+    
+    [fileHandle writeData:_dataContent];
+
+    // 关闭文件句柄
+    [fileHandle closeFile];
+    
+    [_dataContent replaceBytesInRange:NSMakeRange(0, datalen) withBytes:NULL length:0];
+    //[_dataContent resetBytesInRange:NSMakeRange(0, datalen)];
+      
+      
+      
+}
+-(void) writeToLogFile2:(NSString *) msg {
+    @try {
+        
+        
+        
+        NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
+        [DateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss "];
+        NSString *dateTimeStr = [[NSString alloc]initWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
+        
+        NSString *content = [NSString stringWithString:dateTimeStr];
+        
+         
+        NSString *tmp  = [msg stringByAppendingString:@"\n"];
+        
+        content = [content stringByAppendingString:tmp];
+        
+        
+        
+        // 获取当前日期
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyyMMdd"];
+        NSString *currentDate = [formatter stringFromDate:[NSDate date]];
+
+        
+        // 设置日志文件路径
+        NSString *documentsDirectory = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+        NSString *logDirectory = @"/vault/MesaFixture/MesaLog";
+        NSString *logFilePath = [logDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_Error2.log", currentDate]];
+
+        // 检查目录是否存在，不存在则创建
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if (![fileManager fileExistsAtPath:logDirectory]) {
+            [fileManager createDirectoryAtPath:logDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+
+        // 将日志写入文件
+        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFilePath];
+        if (!fileHandle) {
+            [content writeToFile:logFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        } else {
+            [fileHandle seekToEndOfFile];
+            [fileHandle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+            [fileHandle closeFile];
+        }
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
+    
 }
 
 -(BOOL)changeAutoSaveSize:(int)size{
@@ -157,6 +236,63 @@ bool MESALog(NSString *format, ...)NS_FORMAT_FUNCTION(1,2)
         [defaultSpider addRecordWithData:[msg dataUsingEncoding:NSUTF8StringEncoding]];
         return YES;
     }
+}
+
+void writeToLogFile(NSString *logMessage,...)NS_FORMAT_FUNCTION(1,2) {
+    @try {
+        va_list args;
+        va_start(args, logMessage);
+        NSString *msg = [[NSString alloc] initWithFormat:logMessage arguments:args];
+        va_end(args);
+        
+        
+        NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
+        [DateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss "];
+        NSString *dateTimeStr = [[NSString alloc]initWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
+        
+        NSString *content = [NSString stringWithString:dateTimeStr];
+        
+         
+        NSString *tmp  = [msg stringByAppendingString:@"\n"];
+        
+        content = [content stringByAppendingString:tmp];
+        
+        
+        
+        // 获取当前日期
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyyMMdd"];
+        NSString *currentDate = [formatter stringFromDate:[NSDate date]];
+
+        
+        // 设置日志文件路径
+        NSString *documentsDirectory = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+        NSString *logDirectory = @"/vault/MesaFixture/MesaLog";
+        NSString *logFilePath = [logDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_Error.log", currentDate]];
+
+        // 检查目录是否存在，不存在则创建
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if (![fileManager fileExistsAtPath:logDirectory]) {
+            [fileManager createDirectoryAtPath:logDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+
+        // 将日志写入文件
+        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFilePath];
+        if (!fileHandle) {
+            [content writeToFile:logFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        } else {
+            [fileHandle seekToEndOfFile];
+            [fileHandle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+            [fileHandle closeFile];
+        }
+    } @catch (NSException *exception) {
+        MESALog(@"Error on writeToLogFile");
+        MESALog(@"Error on writeToLogFile %@", exception);
+        [defaultSpider writeToLogFile2:@"Error ON writeToLogFile"];
+    } @finally {
+        
+    }
+    
 }
 
 void MESALog2(DataCollctor *spider, NSString *format, ...)NS_FORMAT_FUNCTION(2,3){
